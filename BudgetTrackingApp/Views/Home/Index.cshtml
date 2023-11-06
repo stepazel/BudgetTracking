@@ -1,0 +1,13 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+@model BudgetTrackingApp.Models.AddExpenseModel
+<div class="text-center">
+    <h1 class="display-4">Výdaje</h1>
+     @using (Html.BeginForm("AddExpense", "Home", FormMethod.Post))
+    {
+        <input name="description" placeholder="Zadejte popis výdaje" />
+        <input name="amount" type="number" placeholder="Zadejte částku v korunách"/> 
+        <input type="submit" name="submit" />
+    }
+</div>
