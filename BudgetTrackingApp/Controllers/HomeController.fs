@@ -10,24 +10,36 @@ open BudgetTrackingApp.Models
 
 type HomeController(logger: ILogger<HomeController>) =
     inherit Controller()
+   
+  
+    member this.Index() =
+        use connection = new SqliteConnection("Data source=app.db")
+        let command = connection.CreateCommand()
 
-    member this.Index() = this.View()
+        command.CommandText <- @"select description, amount, created from expenses"
+        connection.Open()
+        use reader = command.ExecuteReader()
+        let results =
+            [while reader.Read() do
+                 yield { Description = reader.GetString(0); Amount = reader.GetInt32(1); Created = reader.GetDateTime(2) }]
+            
+        connection.Close()
+        this.View({Expenses = results})
 
     member this.AddExpense(description: string, amount: int) =
         use connection = new SqliteConnection("Data source=app.db")
         let command = connection.CreateCommand()
-
-        command.CommandText <-
-            @"insert into expenses (description, amount, created)
-                values ($description, $amount, CURRENT_TIMESTAMP)"
-                
-        command.Parameters.AddWithValue("$description", description)
-        command.Parameters.AddWithValue("$amount", amount)
+        
+        command.CommandText <- @"insert into expenses (description, amount, created)
+                 values ($description, $amount, CURRENT_TIMESTAMP)"
+                 
+        command.Parameters.AddWithValue("$description", description) |> ignore
+        command.Parameters.AddWithValue("$amount", amount) |> ignore
         
         connection.Open()
-        let executeNonQuery = command.ExecuteNonQuery()
+        let _ = command.ExecuteNonQuery()
         connection.Close()
-        this.View("index")
+        this.RedirectToAction("Index")
 
     member this.Privacy() = this.View()
 

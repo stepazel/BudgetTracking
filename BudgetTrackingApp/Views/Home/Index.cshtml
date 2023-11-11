@@ -1,13 +1,41 @@
 ﻿@{
     ViewData["Title"] = "Home Page";
 }
-@model BudgetTrackingApp.Models.AddExpenseModel
+@model BudgetTrackingApp.Models.HomepageModel
 <div class="text-center">
-    <h1 class="display-4">Výdaje</h1>
-     @using (Html.BeginForm("AddExpense", "Home", FormMethod.Post))
-    {
-        <input name="description" placeholder="Zadejte popis výdaje" />
-        <input name="amount" type="number" placeholder="Zadejte částku v korunách"/> 
-        <input type="submit" name="submit" />
-    }
+    <h1 class=" pd-5">Výdaje</h1>
+    <section>
+        <form asp-controller="Home" asp-action="AddExpense" method="post">
+            <div class="row justify-content-center">
+                <div class="form-group col-3">
+                    <input class="form-control " name="description" placeholder="Zadejte popis výdaje"/>
+                </div>
+                <div class="form-group col-3">
+                    <input class="form-control" name="amount" type="number" placeholder="Zadejte částku v korunách"/>
+                </div>
+                <div class="col-1">
+                    <input class="btn btn-primary" type="submit" name="submit" value="Přidat">
+                </div>
+            </div>
+        </form>
+    </section>
+    <section>
+        <table class="table">
+            <thead>
+            <th>Výdaj</th>
+            <th>Cena v Kč</th>
+            <th>Datum</th>
+            </thead>
+            <tbody>
+            @foreach (var expense in Model.Expenses)
+            {
+                <tr>
+                    <td>@expense.Description</td>
+                    <td>@expense.Amount</td>
+                    <td>@expense.Created.ToShortDateString()</td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </section>
 </div>

@@ -7,13 +7,17 @@
     <ItemGroup>
         <Compile Include="Models/ErrorViewModel.fs"/>
         <Compile Include="Models\AddExpenseModel.fs" />
+        <Compile Include="Models\HomepageModel.fs" />
+        <Compile Include="DataAccess\ExpenseRepository.fs" />
         <Compile Include="Controllers/HomeController.fs"/>
         <Compile Include="Program.fs"/>
     </ItemGroup>
 
     <ItemGroup>
+        <PackageReference Include="Dapper.FSharp" Version="4.7.0" />
         <PackageReference Include="Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation" Version="7.0.9"/>
         <PackageReference Include="Microsoft.Data.Sqlite" Version="8.0.0-rc.2.23480.1" />
+        <PackageReference Include="SQLProvider" Version="1.3.19" />
     </ItemGroup>
 
 </Project>
