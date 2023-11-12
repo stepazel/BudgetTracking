@@ -2,7 +2,7 @@
     ViewData["Title"] = "Home Page";
 }
 @model BudgetTrackingApp.Models.HomepageModel
-<div class="text-center">
+<div class="text-center" id="parent-div">
     <h1 class=" pd-5">Výdaje</h1>
     <section>
         <form asp-controller="Home" asp-action="AddExpense" method="post">
@@ -19,10 +19,11 @@
                         <option value="food">Jídlo (restaurace)</option>
                         <option value="housing">Bydlení</option>
                         <option value="drinks">Pití (zbytné)</option>
+                        <option value="transport">Doprava</option>
                     </select>
                 </div>
                 <div class="col-1">
-                    <input class="btn btn-primary" type="submit" name="submit" value="Přidat">
+                    <input class="btn btn-primary" hx-post="/Home/Addexpense" hx-target="body" hx-swap="innerHTML" type="submit" name="submit" value="Přidat">
                 </div>
             </div>
         </form>
