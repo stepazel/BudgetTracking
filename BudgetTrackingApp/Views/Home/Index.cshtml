@@ -1,14 +1,15 @@
 ﻿@{
     ViewData["Title"] = "Home Page";
+    string jsonObject = Newtonsoft.Json.JsonConvert.SerializeObject(Model.KnownExpenses);
 }
 @model BudgetTrackingApp.Models.HomepageModel
 <div class="text-center" id="parent-div">
-    <h1 class=" pd-5">Výdaje</h1>
+    <h1 class="pd-5">Výdaje</h1>
     <section>
         <form asp-controller="Home" asp-action="AddExpense" method="post">
             <div class="row justify-content-center">
                 <div class="form-group col-3">
-                    <input class="form-control " name="description" placeholder="Zadejte popis výdaje"/>
+                    <input autocomplete="off" id="description" class="form-control " name="description" placeholder="Zadejte popis výdaje"/>
                 </div>
                 <div class="form-group col-3">
                     <input class="form-control" name="amount" type="number" placeholder="Zadejte částku v korunách"/>

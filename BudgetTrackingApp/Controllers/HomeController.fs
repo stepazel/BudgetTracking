@@ -22,9 +22,15 @@ type HomeController(logger: ILogger<HomeController>) =
         let results =
             [while reader.Read() do
                  yield { Description = reader.GetString(0); Amount = reader.GetInt32(1); Created = reader.GetDateTime(2) }]
+        reader.Close()
+        command.CommandText <- @"select distinct description from expenses"
+        use reader = command.ExecuteReader()
+        let knownExpenses =
+            [while reader.Read() do
+                 yield {Description = reader.GetString(0) }]
             
         connection.Close()
-        this.View({Expenses = results})
+        this.View({Expenses = results; KnownExpenses = knownExpenses })
 
     member this.AddExpense(description: string, amount: int, category: string) =
         use connection = new SqliteConnection("Data source=app.db")
