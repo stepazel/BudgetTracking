@@ -26,15 +26,16 @@ type HomeController(logger: ILogger<HomeController>) =
         connection.Close()
         this.View({Expenses = results})
 
-    member this.AddExpense(description: string, amount: int) =
+    member this.AddExpense(description: string, amount: int, category: string) =
         use connection = new SqliteConnection("Data source=app.db")
         let command = connection.CreateCommand()
         
-        command.CommandText <- @"insert into expenses (description, amount, created)
-                 values ($description, $amount, CURRENT_TIMESTAMP)"
+        command.CommandText <- @"insert into expenses (description, amount, created, category)
+                 values ($description, $amount, CURRENT_TIMESTAMP, $category)"
                  
         command.Parameters.AddWithValue("$description", description) |> ignore
         command.Parameters.AddWithValue("$amount", amount) |> ignore
+        command.Parameters.AddWithValue("$category", category) |> ignore
         
         connection.Open()
         let _ = command.ExecuteNonQuery()
