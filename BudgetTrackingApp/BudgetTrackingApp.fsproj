@@ -10,6 +10,7 @@
         <Compile Include="Models\HomepageModel.fs" />
         <Compile Include="DataAccess\ExpenseRepository.fs" />
         <Compile Include="Controllers/HomeController.fs"/>
+        <Compile Include="Controllers\UserController.fs" />
         <Compile Include="Program.fs"/>
     </ItemGroup>
 

@@ -1,0 +1,22 @@
+<div class="text-center">
+    <h1>Registrace</h1>
+    <section>
+        <form asp-controller="User" asp-action="SignUp" method="post">
+            <div class="row justify-content-center p-1">
+                <div class="col-12 col-lg-4">
+                    <input class="form-control" name="username" placeholder="Uživatelské jméno"/>
+                </div>
+            </div>
+            <div class="row justify-content-center p-1">
+                <div class="col-12 col-lg-4">
+                    <input class="form-control" name="password" placeholder="Heslo"/>
+                </div>
+            </div>
+            <div class="row justify-content-center p-2">
+                <div class="col-12 col-lg-4">
+                    <input type="submit" class="btn btn-primary" name="submit" value="Registrovat se"/>
+                </div>
+            </div>
+        </form>
+    </section>
+</div>
