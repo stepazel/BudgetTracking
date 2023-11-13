@@ -1,23 +1,22 @@
 ﻿namespace BudgetTrackingApp.Controllers
 
+open System
 open System.Diagnostics
-
 open Microsoft.AspNetCore.Mvc
-open Microsoft.Data.Sqlite
 open Microsoft.Extensions.Logging
 
 open BudgetTrackingApp.Models
+open Npgsql
 
 type HomeController(logger: ILogger<HomeController>) =
     inherit Controller()
    
   
     member this.Index() =
-        use connection = new SqliteConnection("Data source=app.db")
+        use connection = NpgsqlDataSource.Create(Environment.GetEnvironmentVariable("DATABASE_URL"))
         let command = connection.CreateCommand()
 
         command.CommandText <- @"select description, amount, created from expenses"
-        connection.Open()
         use reader = command.ExecuteReader()
         let results =
             [while reader.Read() do
@@ -29,11 +28,10 @@ type HomeController(logger: ILogger<HomeController>) =
             [while reader.Read() do
                  yield {Description = reader.GetString(0) }]
             
-        connection.Close()
         this.View({Expenses = results; KnownExpenses = knownExpenses })
 
     member this.AddExpense(description: string, amount: int, category: string) =
-        use connection = new SqliteConnection("Data source=app.db")
+        use connection = NpgsqlDataSource.Create(Environment.GetEnvironmentVariable("DATABASE_URL"))
         let command = connection.CreateCommand()
         
         command.CommandText <- @"insert into expenses (description, amount, created, category)
@@ -43,9 +41,9 @@ type HomeController(logger: ILogger<HomeController>) =
         command.Parameters.AddWithValue("$amount", amount) |> ignore
         command.Parameters.AddWithValue("$category", category) |> ignore
         
-        connection.Open()
+        // connection.Open()
         let _ = command.ExecuteNonQuery()
-        connection.Close()
+        // connection.Close()
         this.RedirectToAction("Index")
 
     member this.Privacy() = this.View()

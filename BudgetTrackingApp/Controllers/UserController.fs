@@ -2,6 +2,7 @@ namespace BudgetTrackingApp.Controllers.UserController
 
 open System.Security.Cryptography
 open System.Text
+open FSharp.Data.Sql.Providers
 open Microsoft.AspNetCore.Mvc
 open Microsoft.Data.Sqlite
 open Microsoft.Extensions.Logging
