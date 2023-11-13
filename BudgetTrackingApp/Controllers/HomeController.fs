@@ -13,7 +13,9 @@ type HomeController(logger: ILogger<HomeController>) =
    
   
     member this.Index() =
-        use connection = NpgsqlDataSource.Create(Environment.GetEnvironmentVariable("DATABASE_URL"))
+        let databasePassword = Environment.GetEnvironmentVariable("DATABASE_PASSWORD")
+        let connectionString = $"Server=app-5ff20bb5-2de7-465b-8f9e-93cf3c184e3f-do-user-15095197-0.c.db.ondigitalocean.com;Port=25060;Database=db;User Id=db;Password={databasePassword};"
+        use connection = NpgsqlDataSource.Create(connectionString)
         let command = connection.CreateCommand()
 
         command.CommandText <- @"select description, amount, created from expenses"
