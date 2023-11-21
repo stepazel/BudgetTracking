@@ -2,23 +2,27 @@
 
 open System
 open System.Diagnostics
+open BudgetTrackingApp.Repositories
+open Microsoft.AspNetCore.Authorization
 open Microsoft.AspNetCore.Mvc
 open Microsoft.Extensions.Logging
 
 open BudgetTrackingApp.Models
 open Npgsql
 
+[<Authorize>]
 type HomeController(logger: ILogger<HomeController>) =
     inherit Controller()
    
   
     member this.Index() =
-        let databasePassword = Environment.GetEnvironmentVariable("DATABASE_PASSWORD")
-        let connectionString = $"Server=app-5ff20bb5-2de7-465b-8f9e-93cf3c184e3f-do-user-15095197-0.c.db.ondigitalocean.com;Port=25060;Database=db;User Id=db;Password={databasePassword};"
-        use connection = NpgsqlDataSource.Create(connectionString)
+        let userIdOption = this.HttpContext.User.Claims |> Seq.tryFind(fun claim -> claim.Type = "Id")
+
+        let connection = UserRepository.connection
         let command = connection.CreateCommand()
 
-        command.CommandText <- @"select description, amount, created from expenses"
+        command.CommandText <- @"select description, amount, created from expenses where user_id = @user_id"
+        command.Parameters.AddWithValue("user_id", Convert.ToInt32(userIdOption.Value.Value)) |> ignore
         use reader = command.ExecuteReader()
         let results =
             [while reader.Read() do
@@ -33,19 +37,18 @@ type HomeController(logger: ILogger<HomeController>) =
         this.View({Expenses = results; KnownExpenses = knownExpenses })
 
     member this.AddExpense(description: string, amount: int, category: string) =
-        use connection = NpgsqlDataSource.Create(Environment.GetEnvironmentVariable("DATABASE_URL"))
+        let connection = UserRepository.connection
         let command = connection.CreateCommand()
         
-        command.CommandText <- @"insert into expenses (description, amount, created, category)
-                 values ($description, $amount, CURRENT_TIMESTAMP, $category)"
-                 
-        command.Parameters.AddWithValue("$description", description) |> ignore
-        command.Parameters.AddWithValue("$amount", amount) |> ignore
-        command.Parameters.AddWithValue("$category", category) |> ignore
+        command.CommandText <- @"insert into expenses (description, amount, created, category, user_id)
+                 values (@description, @amount, CURRENT_TIMESTAMP, @category, @user_id)"
+        let userIdOption = this.HttpContext.User.Claims |> Seq.tryFind(fun claim -> claim.Type = "Id")
+        command.Parameters.AddWithValue("@description", description) |> ignore
+        command.Parameters.AddWithValue("@amount", amount) |> ignore
+        command.Parameters.AddWithValue("@category", category) |> ignore
+        command.Parameters.AddWithValue("@user_id", Convert.ToInt32(userIdOption.Value.Value)) |> ignore
         
-        // connection.Open()
         let _ = command.ExecuteNonQuery()
-        // connection.Close()
         this.RedirectToAction("Index")
 
     member this.Privacy() = this.View()

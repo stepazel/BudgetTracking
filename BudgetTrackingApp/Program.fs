@@ -2,6 +2,7 @@ namespace BudgetTrackingApp
 
 #nowarn "20"
 
+open Microsoft.AspNetCore.Authentication.Cookies
 open Microsoft.AspNetCore.Builder
 open Microsoft.Extensions.DependencyInjection
 open Microsoft.Extensions.Hosting
@@ -18,6 +19,9 @@ module Program =
             .AddRazorRuntimeCompilation()
 
 
+        builder.Services
+            .AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+            .AddCookie(fun options -> options.LoginPath <- "/User")
         builder.Services.AddRazorPages()
 
         let app = builder.Build()
@@ -31,6 +35,7 @@ module Program =
 
         app.UseStaticFiles()
         app.UseRouting()
+        app.UseAuthentication()
         app.UseAuthorization()
 
         app.MapControllerRoute(name = "default", pattern = "{controller=Home}/{action=Index}/{id?}")

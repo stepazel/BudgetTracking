@@ -1,7 +1,6 @@
 <div class="text-center">
-    <h1>Registrace</h1>
     <section>
-        <form asp-controller="User" asp-action="SignUp" method="post">
+        <form asp-controller="User" asp-action="Login" method="post">
             <div class="row justify-content-center p-1">
                 <div class="col-12 col-lg-4">
                     <input class="form-control" name="username" placeholder="Uživatelské jméno"/>
@@ -9,14 +8,15 @@
             </div>
             <div class="row justify-content-center p-1">
                 <div class="col-12 col-lg-4">
-                    <input class="form-control" name="password" placeholder="Heslo"/>
+                    <input class="form-control" name="password" type="password" placeholder="Heslo"/>
                 </div>
             </div>
             <div class="row justify-content-center p-2">
                 <div class="col-12 col-lg-4">
-                    <input type="submit" class="btn btn-primary" name="submit" value="Registrovat se"/>
+                    <input type="submit" class="btn btn-primary" name="submit" value="Přihlásit se"/>
                 </div>
             </div>
         </form>
+        Ještě nejsi zaregistrovaný? Registruj se <a asp-controller="User" asp-action="SignUp">zde.</a>
     </section>
 </div>
