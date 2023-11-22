@@ -8,9 +8,9 @@
     <ItemGroup>
         <Compile Include="Models/ErrorViewModel.fs"/>
         <Compile Include="Models\AddExpenseModel.fs" />
-        <Compile Include="Repositories\UserRepository.fs" />
         <Compile Include="Models\HomepageModel.fs" />
         <Compile Include="Models\UserpageModel.fs" />
+        <Compile Include="Repositories\UserRepository.fs" />
         <Compile Include="Controllers/HomeController.fs"/>
         <Compile Include="Controllers\UserController.fs" />
         <Compile Include="Program.fs"/>

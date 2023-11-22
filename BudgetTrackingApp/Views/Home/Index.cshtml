@@ -1,6 +1,5 @@
 ﻿@{
     ViewData["Title"] = "Home Page";
-    string jsonObject = Newtonsoft.Json.JsonConvert.SerializeObject(Model.KnownExpenses);
 }
 @model BudgetTrackingApp.Models.HomepageModel
 <div class="text-center" id="parent-div">
@@ -37,13 +36,17 @@
             <th>Datum</th>
             </thead>
             <tbody>
-            @foreach (var expense in Model.Expenses)
+            @foreach (var categoryName in Model.Expenses.Keys)
             {
-                <tr>
-                    <td>@expense.Description</td>
-                    <td>@expense.Amount</td>
-                    <td>@expense.Created.ToShortDateString()</td>
-                </tr>
+                <tr><td class="border-bottom-0"><b>@Model.CategoryNames[categoryName]</b></td></tr>
+                @foreach (var expense in Model.Expenses[categoryName])
+                {
+                    <tr>
+                        <td>@expense.Description</td>
+                        <td>@expense.Amount</td>
+                        <td>@expense.Created.ToString("d. M. yyyy")</td>
+                    </tr>
+                }    
             }
             </tbody>
         </table>
