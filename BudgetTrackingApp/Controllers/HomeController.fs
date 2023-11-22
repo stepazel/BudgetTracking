@@ -12,21 +12,14 @@ open BudgetTrackingApp.Models
 [<Authorize>]
 type HomeController(logger: ILogger<HomeController>) =
     inherit Controller()
-
+    member this.userId = this.HttpContext.User.Claims |> Seq.tryFind (fun claim -> claim.Type = "Id") |> Option.get |> fun claim -> claim.Value |> Convert.ToInt32
+    
     member this.Index() =
-        let userIdOption =
-            this.HttpContext.User.Claims |> Seq.tryFind (fun claim -> claim.Type = "Id")
-
         let connection = UserRepository.connection
         let command = connection.CreateCommand()
-
         command.CommandText <- @"select description, amount, created, category from expenses where user_id = @user_id"
-
-        command.Parameters.AddWithValue("user_id", Convert.ToInt32(userIdOption.Value.Value))
-        |> ignore
-
+        command.Parameters.AddWithValue("user_id", this.userId) |> ignore
         use reader = command.ExecuteReader()
-
         let results: Expense seq =
             [ while reader.Read() do
                   yield
@@ -34,13 +27,7 @@ type HomeController(logger: ILogger<HomeController>) =
                         Amount = reader.GetInt32(1)
                         Created = reader.GetDateTime(2)
                         Category = reader.GetString(3) } ]
-
         reader.Close()
-        // command.CommandText <- @"select distinct description from expenses"
-        // use reader = command.ExecuteReader()
-        // let knownExpenses =
-        //     [while reader.Read() do
-        //          yield {Description = reader.GetString(0) }]
 
         let (=>) x y = x,y
         this.View(
@@ -63,15 +50,11 @@ type HomeController(logger: ILogger<HomeController>) =
             @"insert into expenses (description, amount, created, category, user_id)
                  values (@description, @amount, CURRENT_TIMESTAMP, @category, @user_id)"
 
-        let userIdOption =
-            this.HttpContext.User.Claims |> Seq.tryFind (fun claim -> claim.Type = "Id")
-
         command.Parameters.AddWithValue("@description", description) |> ignore
         command.Parameters.AddWithValue("@amount", amount) |> ignore
         command.Parameters.AddWithValue("@category", category) |> ignore
 
-        command.Parameters.AddWithValue("@user_id", Convert.ToInt32(userIdOption.Value.Value))
-        |> ignore
+        command.Parameters.AddWithValue("@user_id", this.userId) |> ignore
 
         let _ = command.ExecuteNonQuery()
         this.RedirectToAction("Index")
