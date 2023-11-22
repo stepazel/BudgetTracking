@@ -51,16 +51,19 @@ type HomeController(logger: ILogger<HomeController>) =
               Total = results |> Seq.sumBy (fun expense -> expense.Amount)  }
         )
 
-    member this.AddExpense(description: string, amount: int, category: string) =
+    member this.AddExpense(description: string, amount: float, category: string, currency: string) =
         let connection = UserRepository.connection
         let command = connection.CreateCommand()
 
         command.CommandText <-
             @"insert into expenses (description, amount, created, category, user_id)
                  values (@description, @amount, CURRENT_TIMESTAMP, @category, @user_id)"
-
+        
         command.Parameters.AddWithValue("@description", description) |> ignore
-        command.Parameters.AddWithValue("@amount", amount) |> ignore
+        if currency = "EUR" then
+            command.Parameters.AddWithValue("@amount", round (amount * 24.5)) |> ignore
+            else
+            command.Parameters.AddWithValue("@amount", amount) |> ignore
         command.Parameters.AddWithValue("@category", category) |> ignore
 
         command.Parameters.AddWithValue("@user_id", this.userId) |> ignore
