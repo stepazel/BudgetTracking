@@ -21,11 +21,10 @@
                 </div>
                 <div class="col-6 col-lg-2 pt-1">
                     <select name="category" class="form-control">
-                        <option value="groceries">Nákup</option>
-                        <option value="food">Jídlo (restaurace)</option>
-                        <option value="housing">Bydlení</option>
-                        <option value="drinks">Pití (zbytné)</option>
-                        <option value="transport">Doprava</option>
+                        @foreach(var categoryName in Model.CategoryNames.Keys)
+                        {
+                            <option value="@categoryName">@Model.CategoryNames[categoryName]</option>
+                        }
                     </select>
                 </div>
                 <div class="col-6 col-lg-1 pt-1">

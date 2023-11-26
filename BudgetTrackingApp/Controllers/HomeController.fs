@@ -2,6 +2,7 @@
 
 open System
 open System.Diagnostics
+open System.Net.Http
 open BudgetTrackingApp.Repositories
 open Microsoft.AspNetCore.Authorization
 open Microsoft.AspNetCore.Mvc
@@ -22,7 +23,7 @@ type HomeController(logger: ILogger<HomeController>) =
     member this.Index() =
         let connection = UserRepository.connection
         let command = connection.CreateCommand()
-        command.CommandText <- @"select description, amount, created, category, id from expenses where user_id = @user_id"
+        command.CommandText <- @"select description, amount, created, category, id from expenses where user_id = @user_id order by created desc"
         command.Parameters.AddWithValue("user_id", this.userId) |> ignore
         use reader = command.ExecuteReader()
 
@@ -47,7 +48,8 @@ type HomeController(logger: ILogger<HomeController>) =
                       "food" => "Jídlo (restaurace)"
                       "housing" => "Bydlení"
                       "drinks" => "Pití (zbytné)"
-                      "transport" => "Doprava" ]
+                      "transport" => "Doprava"
+                      "leisure" => "Zábava" ]
               Total = results |> Seq.sumBy (fun expense -> expense.Amount)  }
         )
 
@@ -59,6 +61,16 @@ type HomeController(logger: ILogger<HomeController>) =
             @"insert into expenses (description, amount, created, category, user_id)
                  values (@description, @amount, CURRENT_TIMESTAMP, @category, @user_id)"
         
+        // TODO https://cdn.jsdelivr.net/gh/fawazahmed0/currency-api@1/latest/currencies/eur/czk.json
+
+        // create the HttpClient
+        let client = new HttpClient()
+        let async = client.GetAsync("https://cdn.jsdelivr.net/gh/fawazahmed0/currency-api@1/latest/currencies/eur/czk.json")
+        // get the response
+        let response = async.Result
+// get the response content
+        
+                
         command.Parameters.AddWithValue("@description", description) |> ignore
         if currency = "EUR" then
             command.Parameters.AddWithValue("@amount", round (amount * 24.5)) |> ignore
