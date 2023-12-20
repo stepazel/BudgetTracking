@@ -1,0 +1,34 @@
+create table expenses
+(
+    id          serial primary key,
+    description TEXT        not null,
+    amount      integer     not null,
+    created     TIMESTAMPtz not null,
+    category    TEXT,
+    user_id     integer REFERENCES users (id)
+);
+
+create table users
+(
+    id       serial
+        primary key,
+    username TEXT not null,
+    password TEXT not null
+);
+
+-- 1st migration
+
+create table categories
+(
+    id   serial primary key,
+    name TEXT not null
+);
+
+create table user_categories
+(
+    category_id integer references categories,
+    user_id     integer references users
+);
+
+alter table expenses 
+add category_id integer references categories
