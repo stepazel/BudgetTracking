@@ -37,16 +37,32 @@ type HomeController(logger: ILogger<HomeController>) =
                 for c in categoryTable do
                     selectAll
                 } |> conn.SelectAsync<Category> |> Async.AwaitTask 
-           
-            let expenseTable = table'<Expense> "expenses"
-            let! total =
-                select {
-                    for e in expenseTable do
-                        sum "Amount" "Value"
-                } |> conn.SelectAsync<{| Value : float |}> |> Async.AwaitTask
-                
             let categoryNamesMap = categories |> Seq.map (fun c  -> (c.Id, c.Name)) |> Map.ofSeq
-            return this.View({Categories = categoryNamesMap; Total = total.First().Value}) :> IActionResult
+
+            let total = conn.QuerySingle<float>("""select sum("Amount") from expenses where "UserId" = @UserId""", {| UserId = this.userId |})
+                
+            let yearlyTotal = conn.QuerySingle<float>("""select sum("Amount") from expenses 
+                     where extract(year from "Created") = extract(year from now())
+                       and "UserId" = @UserId""", {| UserId = this.userId |})
+                
+            let monthlyTotal = conn.QuerySingle<float>(""" select sum("Amount") from expenses 
+                     where extract(year from "Created") = extract(year from now()) 
+                       and extract(month from "Created") = extract(month from now())
+                       and "UserId" = @UserId""", {| UserId = this.userId|})
+            
+            let weeklyTotal = conn.QuerySingle<float>(""" select sum("Amount") from expenses 
+                     where extract(year from "Created") = extract(year from now()) 
+                       and extract(month from "Created") = extract(month from now())
+                       and extract(week from "Created") = extract(week from now())
+                       and "UserId" = @UserId""", {| UserId = this.userId|})
+            
+            return this.View({
+                Categories = categoryNamesMap
+                Total = total
+                YearlyTotal = yearlyTotal
+                MonthlyTotal = monthlyTotal
+                WeeklyTotal = weeklyTotal
+            }) :> IActionResult
         } 
         
     member this.AddExpense(description: string, amount: int, categoryId: int, currency: string) =
