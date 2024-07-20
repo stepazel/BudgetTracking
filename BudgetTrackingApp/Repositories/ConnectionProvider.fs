@@ -1,6 +1,7 @@
-module BudgetTrackingApp.Repositories.UserRepository
+module BudgetTrackingApp.Repositories.ConnectionProvider
 
 open System
+open System.Data
 open Microsoft.Extensions.Configuration
 open Npgsql
 
@@ -14,3 +15,4 @@ let configuration =
 let databasePassword = if Environment.MachineName = "LT-STZE" then "admin" else Environment.GetEnvironmentVariable("DATABASE_PASSWORD")
 let connection = $"""{configuration.GetSection("ConnectionString").Value}Password={databasePassword};""" |> NpgsqlDataSource.Create
                     
+let conn = new NpgsqlConnection($"""{configuration.GetSection("ConnectionString").Value}Password={databasePassword};""") :> IDbConnection

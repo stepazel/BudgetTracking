@@ -29,7 +29,7 @@ type UserController(logger: ILogger<UserController>) =
             |> sha512.ComputeHash
             |> Seq.fold (fun hash byte -> hash + byte.ToString("x2")) ""
 
-        let connection = UserRepository.connection
+        let connection = ConnectionProvider.connection
         let command = connection.CreateCommand()
         command.CommandText <- "insert into users (username, password) values (@username, @password)"
         command.Parameters.AddWithValue("username", username) |> ignore
@@ -46,7 +46,7 @@ type UserController(logger: ILogger<UserController>) =
             |> sha512.ComputeHash
             |> Seq.fold (fun hash byte -> hash + byte.ToString("x2")) ""
 
-        let connection = UserRepository.connection
+        let connection = ConnectionProvider.connection
         let command = connection.CreateCommand()
         command.CommandText <- "select id, password from users where username = @username"
         command.Parameters.AddWithValue("username", username) |> ignore
