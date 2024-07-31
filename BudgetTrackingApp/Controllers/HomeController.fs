@@ -1,11 +1,8 @@
 ﻿namespace BudgetTrackingApp.Controllers
-open System.Linq
 open BudgetTrackingApp.Repositories.DatabaseModels
-
 open System
 open System.Diagnostics
 open BudgetTrackingApp.Repositories
-open Dapper.FSharp.PostgreSQL
 open Microsoft.AspNetCore.Authorization
 open Microsoft.AspNetCore.Mvc
 open Microsoft.Extensions.Logging
@@ -30,31 +27,25 @@ type HomeController(logger: ILogger<HomeController>) =
     member this.Index() =
         ActionResult.ofAsync <| async {
             let conn = ConnectionProvider.conn
-            let categoryTable = table'<Category> "categories"
-        
-            let! categories = 
-                select {
-                for c in categoryTable do
-                    selectAll
-                } |> conn.SelectAsync<Category> |> Async.AwaitTask 
+            let categories = conn.Query<Category>("select id, name from categories")
             let categoryNamesMap = categories |> Seq.map (fun c  -> (c.Id, c.Name)) |> Map.ofSeq
 
-            let total = conn.QuerySingle<float>("""select sum("Amount") from expenses where "UserId" = @UserId""", {| UserId = this.userId |})
+            let total = conn.QuerySingle<float>("""select coalesce(sum(amount), 0) from expenses where user_id = @UserId""", {| UserId = this.userId |})
                 
-            let yearlyTotal = conn.QuerySingle<float>("""select sum("Amount") from expenses 
-                     where extract(year from "Created") = extract(year from now())
-                       and "UserId" = @UserId""", {| UserId = this.userId |})
+            let yearlyTotal = conn.QuerySingle<float>("""select coalesce(sum(amount), 0) from expenses 
+                     where extract(year from created) = extract(year from now())
+                       and user_id = @UserId""", {| UserId = this.userId |})
                 
-            let monthlyTotal = conn.QuerySingle<float>(""" select sum("Amount") from expenses 
-                     where extract(year from "Created") = extract(year from now()) 
-                       and extract(month from "Created") = extract(month from now())
-                       and "UserId" = @UserId""", {| UserId = this.userId|})
+            let monthlyTotal = conn.QuerySingle<float>(""" select coalesce(sum(amount), 0) from expenses 
+                     where extract(year from created) = extract(year from now()) 
+                       and extract(month from created) = extract(month from now())
+                       and user_id = @UserId""", {| UserId = this.userId|})
             
-            let weeklyTotal = conn.QuerySingle<float>(""" select sum("Amount") from expenses 
-                     where extract(year from "Created") = extract(year from now()) 
-                       and extract(month from "Created") = extract(month from now())
-                       and extract(week from "Created") = extract(week from now())
-                       and "UserId" = @UserId""", {| UserId = this.userId|})
+            let weeklyTotal = conn.QuerySingle<float>(""" select coalesce(sum(amount), 0) from expenses 
+                     where extract(year from created) = extract(year from now()) 
+                       and extract(month from created) = extract(month from now())
+                       and extract(week from created) = extract(week from now())
+                       and user_id = @UserId""", {| UserId = this.userId|})
             
             return this.View({
                 Categories = categoryNamesMap
@@ -77,12 +68,10 @@ type HomeController(logger: ILogger<HomeController>) =
               UserId = this.userId }
  
         let sql = """
-         INSERT INTO expenses ("CategoryId", "Amount", "Description", "Created", "UserId")
-         VALUES (@CategoryId, @Amount, @Description, @Created, @UserId)
-         RETURNING "Id";
+         INSERT INTO expenses (category_id, amount, description, created, user_id)
+         VALUES (@CategoryId, @Amount, @Description, @Created, @UserId);
         """
-        
-        conn.QuerySingleAsync<int>(sql, expense) |> Async.AwaitTask |> ignore
+        conn.Execute(sql, expense) |> ignore;
         this.RedirectToAction("Index")
 
     member this.Privacy() = this.View()
