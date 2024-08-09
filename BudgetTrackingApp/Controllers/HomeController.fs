@@ -25,36 +25,29 @@ type HomeController(logger: ILogger<HomeController>) =
         |> fun claim -> claim.Value |> Convert.ToInt32
 
     member this.Index() =
-        ActionResult.ofAsync <| async {
-            let conn = ConnectionProvider.conn
-            let categories = conn.Query<Category>("select id, name from categories")
-            let categoryNamesMap = categories |> Seq.map (fun c  -> (c.Id, c.Name)) |> Map.ofSeq
+        let conn = ConnectionProvider.conn
+        let totalsQuery = """
+        select
+            coalesce(sum(amount), 0) as Total,
+            coalesce(sum(case when extract(year from created) = extract(year from now()) then amount else 0 end), 0) as YearlyTotal,
+            coalesce(sum(case when extract(year from created) = extract(year from now()) and extract(month from created) = extract(month from now()) then amount else 0 end), 0) as MonthlyTotal,
+            coalesce(sum(case when extract(year from created) = extract(year from now()) and extract(week from created) = extract(week from now()) then amount else 0 end), 0) as WeeklyTotal
+        from expenses
+        where user_id = @UserId
+        """
+        let totals = conn.QuerySingle<TotalsResult>(totalsQuery, {| UserId = this.userId |})
 
-            let total = conn.QuerySingle<float>("""select coalesce(sum(amount), 0) from expenses where user_id = @UserId""", {| UserId = this.userId |})
-                
-            let yearlyTotal = conn.QuerySingle<float>("""select coalesce(sum(amount), 0) from expenses 
-                     where extract(year from created) = extract(year from now())
-                       and user_id = @UserId""", {| UserId = this.userId |})
-                
-            let monthlyTotal = conn.QuerySingle<float>(""" select coalesce(sum(amount), 0) from expenses 
-                     where extract(year from created) = extract(year from now()) 
-                       and extract(month from created) = extract(month from now())
-                       and user_id = @UserId""", {| UserId = this.userId|})
-            
-            let weeklyTotal = conn.QuerySingle<float>(""" select coalesce(sum(amount), 0) from expenses 
-                     where extract(year from created) = extract(year from now()) 
-                       and extract(month from created) = extract(month from now())
-                       and extract(week from created) = extract(week from now())
-                       and user_id = @UserId""", {| UserId = this.userId|})
-            
-            return this.View({
-                Categories = categoryNamesMap
-                Total = total
-                YearlyTotal = yearlyTotal
-                MonthlyTotal = monthlyTotal
-                WeeklyTotal = weeklyTotal
-            }) :> IActionResult
-        } 
+        let categories = conn.Query<Category>("select id, name from categories")
+        let categoryNamesMap = categories |> Seq.map (fun c  -> (c.Id, c.Name)) |> Map.ofSeq
+
+        this.View({
+            Categories = categoryNamesMap
+            Total = totals.Total
+            YearlyTotal = totals.YearlyTotal
+            MonthlyTotal = totals.MonthlyTotal
+            WeeklyTotal = totals.WeeklyTotal
+        })
+        
         
     member this.AddExpense(description: string, amount: int, categoryId: int, currency: string) =
         let conn = ConnectionProvider.conn
@@ -71,7 +64,7 @@ type HomeController(logger: ILogger<HomeController>) =
          INSERT INTO expenses (category_id, amount, description, created, user_id)
          VALUES (@CategoryId, @Amount, @Description, @Created, @UserId);
         """
-        conn.Execute(sql, expense) |> ignore;
+        conn.Execute(sql, expense) |> ignore
         this.RedirectToAction("Index")
 
     member this.Privacy() = this.View()

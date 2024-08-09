@@ -10,10 +10,12 @@
         <Compile Include="Models\AddExpenseModel.fs" />
         <Compile Include="Models\HomepageModel.fs" />
         <Compile Include="Models\UserpageModel.fs" />
+        <Compile Include="Models\InsightsModel.fs" />
         <Compile Include="Repositories\ConnectionProvider.fs" />
         <Compile Include="Repositories\DatabaseModels.fs" />
         <Compile Include="Controllers/HomeController.fs"/>
         <Compile Include="Controllers\UserController.fs" />
+        <Compile Include="Controllers\InsightsController.fs" />
         <Folder Include="Services\" />
         <Compile Include="Program.fs"/>
     </ItemGroup>

@@ -1,4 +1,4 @@
-namespace BudgetTrackingApp.Controllers.UserController
+namespace BudgetTrackingApp.Controllers
 
 open System
 open System.Security.Cryptography
