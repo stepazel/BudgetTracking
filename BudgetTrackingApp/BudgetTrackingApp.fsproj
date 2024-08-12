@@ -18,6 +18,7 @@
         <Compile Include="Controllers\InsightsController.fs" />
         <Folder Include="Services\" />
         <Compile Include="Program.fs"/>
+        <Folder Include="wwwroot\lib\" />
     </ItemGroup>
 
     <ItemGroup>
@@ -35,6 +36,12 @@
       </Content>
       <Content Include="Dockerfile" />
       <Content Include="tables.sql" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <_ContentIncludedByDefault Remove="wwwroot\lib\jquery-validation-unobtrusive\jquery.validate.unobtrusive.js" />
+      <_ContentIncludedByDefault Remove="wwwroot\lib\jquery-validation-unobtrusive\jquery.validate.unobtrusive.min.js" />
+      <_ContentIncludedByDefault Remove="wwwroot\lib\jquery-validation-unobtrusive\LICENSE.txt" />
     </ItemGroup>
 
 </Project>
