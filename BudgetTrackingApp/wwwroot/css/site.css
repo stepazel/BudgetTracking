@@ -1,27 +1,98 @@
-﻿body {
-    margin: 0;
-}
-
+﻿
 .nav {
     margin: 0;
-    background-color: #36d1c4;
+    background-color: var(--main-bg-color);
     display: flex;
     justify-content: space-between;
     list-style-type: none;
     padding: 0;
 }
 
-ul li:first-child {
-    background-color: violet;
-}
-
 ul li {
-    padding: 10px 25px;
+    padding: 10px 15px;
 }
 
-li a {
+li a{
     text-decoration: none;
-    color: black;
+    color: var(--main-text-color);
+}
+
+.form-control {
+    width: 80%;
+    padding: 12px 20px;
+    margin: 8px 0;
+    box-sizing: border-box;
+    border: 2px solid var(--main-bg-color);
+    border-radius: 4px;
+}
+
+.form-control:focus {
+    border-color: var(--alt-color);
+    outline: none;
+    box-shadow: 0 0 10px var(--alt-color);
+}
+
+@media screen and (min-width: 600px) {
+    .nav {
+        flex-direction: row;
+        justify-content: flex-start;
+    }
+}
+
+input[type=submit] {
+    background-color: var(--main-bg-color);
+    color: var(--main-text-color);
+    padding: 14px 20px;
+    margin: 8px 0;
+    border: none;
+    cursor: pointer;
+    border-radius: 4px;
+}
+label {
+    display: block;
+}
+
+.form-row input {
+    margin: 5px;
+}
+
+.form-row select {
+    margin: 5px;
+}
+
+.text-center {
+    display: flex;
+    justify-content: center;
+}
+
+.padding {
+    padding: 20px;
+}
+
+.footer {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    padding: 1rem;
+    background-color: var(--main-bg-color);
+    color: var(--main-text-color);
+    
+}
+
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background-color: floralwhite;
+    color: var(--main-text-color);
+}
+
+
+
+:root {
+    /*--main-bg-color: #36d1c4;*/
+    --main-bg-color: #32c189;
+    --alt-color: #f6318c;
+    --main-text-color: #333;
 }
 
 

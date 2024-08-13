@@ -2,42 +2,35 @@
     ViewData["Title"] = "Výdaje";
 }
 @model BudgetTrackingApp.Models.HomepageModel
+<h1 class="text-center">Výdaje</h1>
 <div class="text-center" id="parent-div">
-    <h1 class="pd-5">Výdaje</h1>
     <section>
         <form asp-controller="Home" asp-action="AddExpense" method="post">
-            <div class="row justify-content-center">
-                <div class="col-6 col-lg-3">
-                    <input autocomplete="off" id="description" class="form-control " name="description" placeholder="Popis výdaje"/>
-                </div>
-                <div class="col-4 col-lg-3">
-                    <input class="form-control" name="amount" type="number" placeholder="Částka"/>
-                </div>
-                <div class="col-2 col-lg-1">
-                    <select name="currency" class="form-control">
-                        <option value="CZK">Kč</option>
-                        <option value="EUR">€</option>
-                    </select>
-                </div>
-                <div class="col-6 col-lg-2 pt-1">
-                    <select name="categoryId" class="form-control">
-                        @foreach(var categoryId in Model.Categories.Keys)
-                        {
-                            <option value="@categoryId">@Model.Categories[categoryId]</option>
-                        }
-                    </select>
-                </div>
-                <div class="row text-center">
-                    <div class="col-12 p-1">
-                        Celkové výdaje: <b>@Model.Total</b> Kč
-                        Za rok: <b>@Model.YearlyTotal</b> Kč
-                        Za měsíc: <b>@Model.MonthlyTotal</b> Kč
-                        Za týden: <b>@Model.WeeklyTotal</b> Kč
-                    </div>
-                </div>
-                <div class="col-6 col-lg-1 pt-1">
-                    <button class="btn btn-primary w-100" hx-post="/Home/Addexpense" hx-target="body" hx-swap="innerHTML" type="submit" name="submit" value="Přidat">Přidat</button>
-                </div>
+            <div class="text-center form-row">
+                <input class="form-control" name="amount" type="number" placeholder="Částka"/>
+                <input autocomplete="off" id="description" class="form-control " name="description" placeholder="Popis výdaje"/>
+            </div>
+            <div class="text-center form-row">
+                <select name="categoryId" class="form-control">
+                    @foreach (var categoryId in Model.Categories.Keys)
+                    {
+                        <option value="@categoryId">@Model.Categories[categoryId]</option>
+                    }
+                </select>
+                <input type="date" class="form-control" name="date" value="@DateTime.Now.ToString("yyyy-MM-dd")"/>
+            </div>
+            <div class="text-center">
+                <input style="width: 80%" hx-post="/Home/Addexpense" hx-target="body" hx-swap="innerHTML" type="submit" name="submit" value="Přidat"/>
+            </div>
+
+            <div class="text-center">
+                Celkové výdaje: <b>@Model.Total</b> Kč
+                Za rok: <b>@Model.YearlyTotal</b> Kč
+            </div>
+
+            <div class="text-center">
+                Za měsíc: <b>@Model.MonthlyTotal</b> Kč
+                Za týden: <b>@Model.WeeklyTotal</b> Kč
             </div>
         </form>
     </section>
