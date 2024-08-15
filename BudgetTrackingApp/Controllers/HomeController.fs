@@ -39,8 +39,14 @@ type HomeController(logger: ILogger<HomeController>) =
 
         let categories = conn.Query<Category>("select id, name from categories")
         let categoryNamesMap = categories |> Seq.map (fun c  -> (c.Id, c.Name)) |> Map.ofSeq
+        
+        let last5expenses = conn.Query<Expense>("
+select e.id, description, amount, created, c.name as CategoryName
+from expenses e join categories c on e.category_id = c.id
+where e.user_id = @UserId order by created desc limit 5;", {| UserId = this.userId |})
 
         this.View({
+            Expenses = last5expenses
             Categories = categoryNamesMap
             Total = totals.Total
             YearlyTotal = totals.YearlyTotal
@@ -49,14 +55,14 @@ type HomeController(logger: ILogger<HomeController>) =
         })
         
         
-    member this.AddExpense(description: string, amount: int, categoryId: int, currency: string) =
+    member this.AddExpense(description: string, amount: int, categoryId: int, date: DateTime) =
         let conn = ConnectionProvider.conn
         
         let expense =
             { Id = Nullable()
               Description = description
               Amount = amount
-              Created = DateTime.Now
+              Created = date
               CategoryId = categoryId
               UserId = this.userId }
  
@@ -89,13 +95,17 @@ type HomeController(logger: ILogger<HomeController>) =
         else
             this.RedirectToAction("index")
             
-    [<HttpPost>]
+    [<HttpDelete>]
     member this.DeleteExpense(id: int) =
-        let command = ConnectionProvider.connection.CreateCommand()
-        command.CommandText <- "delete from expenses where id = @id and user_id = @user_id"
-        command.Parameters.AddWithValue("@id", id) |> ignore
-        command.Parameters.AddWithValue("@user_id", this.userId) |> ignore
-        command.ExecuteNonQuery() |> ignore
+        // let command = ConnectionProvider.connection.CreateCommand()
+        // command.CommandText <- "delete from expenses where id = @id and user_id = @user_id"
+        // command.Parameters.AddWithValue("@id", id) |> ignore
+        // command.Parameters.AddWithValue("@user_id", this.userId) |> ignore
+        // command.ExecuteNonQuery() |> ignore
+        let conn = ConnectionProvider.conn
+        // TODO tohle nejak nefunguje, odstrani to 0 expenses :D 
+        let execute = conn.Execute("delete from expenses where id = @Id and user_id = @UserId", {| Id = id; UserId = this.userId |})
+        Console.WriteLine(execute)
         this.RedirectToAction("index")
 
     [<ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)>]

@@ -22,15 +22,33 @@
             <div class="text-center">
                 <input style="width: 80%" hx-post="/Home/Addexpense" hx-target="body" hx-swap="innerHTML" type="submit" name="submit" value="Přidat"/>
             </div>
-
+            
             <div class="text-center">
-                Celkové výdaje: <b>@Model.Total</b> Kč
-                Za rok: <b>@Model.YearlyTotal</b> Kč
-            </div>
-
-            <div class="text-center">
-                Za měsíc: <b>@Model.MonthlyTotal</b> Kč
-                Za týden: <b>@Model.WeeklyTotal</b> Kč
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Částka</th>
+                            <th>Popis</th>
+                            <th>Datum</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    @foreach (var expense in Model.Expenses)
+                    {
+                        <tr>
+                            <td>@expense.Amount Kč</td>
+                            <td>@expense.Description</td>
+                            <td>@expense.Created.Date.ToString("d")</td>
+                            <td>
+                                <button hx-delete="/Home/DeleteExpense" value="@expense.Id" name="id" hx-target="body" hx-swap="innerHTML">
+                                    <i class="fa fa-trash-o"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    }
+                    </tbody>
+                </table>
             </div>
         </form>
     </section>
