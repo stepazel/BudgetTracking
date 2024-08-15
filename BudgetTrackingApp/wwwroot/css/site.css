@@ -1,65 +1,138 @@
-﻿/* Please see documentation at https://docs.microsoft.com/aspnet/core/client-side/bundling-and-minification
-for details on configuring this project to bundle and minify static web assets. */
-
-a.navbar-brand {
-  white-space: normal;
-  text-align: center;
-  word-break: break-all;
+﻿
+.nav {
+    margin: 0;
+    background-color: var(--main-bg-color);
+    display: flex;
+    justify-content: space-between;
+    list-style-type: none;
+    padding: 0;
 }
 
-a {
-  color: #0077cc;
+ul li {
+    padding: 10px 15px;
 }
 
-.btn-primary {
-  color: #fff;
-  background-color: #1b6ec2;
-  border-color: #1861ac;
+li a{
+    text-decoration: none;
+    color: var(--main-text-color);
 }
 
-.nav-pills .nav-link.active, .nav-pills .show > .nav-link {
-  color: #fff;
-  background-color: #1b6ec2;
-  border-color: #1861ac;
+.form-control {
+    width: 80%;
+    padding: 12px 20px;
+    margin: 8px 0;
+    box-sizing: border-box;
+    border: 2px solid var(--main-bg-color);
+    border-radius: 4px;
 }
 
-html {
-  font-size: 14px;
-}
-@media (min-width: 768px) {
-  html {
-    font-size: 16px;
-  }
+.form-control:focus {
+    border-color: var(--alt-color);
+    outline: none;
+    box-shadow: 0 0 10px var(--alt-color);
 }
 
-.border-top {
-  border-top: 1px solid #e5e5e5;
-}
-.border-bottom {
-  border-bottom: 1px solid #e5e5e5;
-}
-
-.box-shadow {
-  box-shadow: 0 .25rem .75rem rgba(0, 0, 0, .05);
+@media screen and (min-width: 600px) {
+    .nav {
+        flex-direction: row;
+        justify-content: flex-start;
+    }
 }
 
-button.accept-policy {
-  font-size: 1rem;
-  line-height: inherit;
+input[type=submit] {
+    background-color: var(--main-bg-color);
+    color: var(--main-text-color);
+    padding: 14px 20px;
+    margin: 8px 0;
+    border: none;
+    cursor: pointer;
+    border-radius: 4px;
+}
+label {
+    display: block;
+}
+table {
+    /*margin: 0 auto;*/
 }
 
-html {
-  position: relative;
-  min-height: 100%;
+/* Default Table Style */
+table {
+    color: #333;
+    background: white;
+    border: 1px solid grey;
+    font-size: 12pt;
+    border-collapse: collapse;
+}
+table thead th,
+table tfoot th {
+    color: #777;
+    background: rgba(0,0,0,.1);
+}
+table caption {
+    padding:.5em;
+}
+table th,
+table td {
+    padding: .5em;
+    border: 1px solid lightgrey;
+}
+
+.form-row input {
+    margin: 5px;
+}
+
+.form-row select {
+    margin: 5px;
+}
+
+.text-center {
+    display: flex;
+    justify-content: center;
+}
+
+.padding {
+    padding: 20px;
+}
+
+.footer {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    padding: 1rem;
+    background-color: var(--main-bg-color);
+    color: var(--main-text-color);
+    
 }
 
 body {
-  margin-bottom: 60px;
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background-color: floralwhite;
+    color: var(--main-text-color);
 }
-.footer {
-  position: absolute;
-  bottom: 0;
-  width: 100%;
-  white-space: nowrap;
-  line-height: 60px;
+
+
+
+:root {
+    /*--main-bg-color: #36d1c4;*/
+    --main-bg-color: #32c189;
+    --alt-color: #f6318c;
+    --main-text-color: #333;
+}
+
+
+.first-color {
+    background: #36d1c4;
+}
+
+.second-color {
+    background: #a0eecc;
+}
+
+.third-color {
+    background: #fff2be;
+}
+
+.fourth-color {
+    background: #f6318c;
 }
