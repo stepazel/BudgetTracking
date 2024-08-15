@@ -20,7 +20,7 @@
         <input type="date" class="form-control" name="date" value="@DateTime.Now.ToString("yyyy-MM-dd")"/>
       </div>
       <div class="text-center">
-        <input style="width: 80%" hx-post="/Home/Addexpense" hx-target="body" hx-swap="innerHTML" type="submit" name="submit" value="Přidat"/>
+        <input style="width: 80%; font-size: 16px" hx-post="/Home/Addexpense" hx-target="body" hx-swap="innerHTML" type="submit" name="submit" value="Přidat"/>
       </div>
 
       <div class="text-center">
@@ -51,6 +51,8 @@
         </table>
       </div>
     </form>
-    <a href="@Url.Action("ManageUserCategories", "User")">Spravovat kategorie</a>
+    <div class="text-center">
+    <a class="link text-center" href="@Url.Action("ManageUserCategories", "User")">Spravovat kategorie</a>
+    </div>
   </section>
 </div>
