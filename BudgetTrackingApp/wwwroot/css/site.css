@@ -51,9 +51,6 @@ input[type=submit] {
 label {
     display: block;
 }
-table {
-    /*margin: 0 auto;*/
-}
 
 /* Default Table Style */
 table {
@@ -120,19 +117,7 @@ body {
     --main-text-color: #333;
 }
 
-
-.first-color {
-    background: #36d1c4;
-}
-
-.second-color {
-    background: #a0eecc;
-}
-
-.third-color {
-    background: #fff2be;
-}
-
-.fourth-color {
-    background: #f6318c;
+.background {
+    background-color: var(--main-bg-color);
+    color: var(--main-text-color);
 }

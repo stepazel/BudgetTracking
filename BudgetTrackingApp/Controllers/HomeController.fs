@@ -37,7 +37,9 @@ type HomeController(logger: ILogger<HomeController>) =
         """
         let totals = conn.QuerySingle<TotalsResult>(totalsQuery, {| UserId = this.userId |})
 
-        let categories = conn.Query<Category>("select id, name from categories")
+        let categories = conn.Query<Category>(
+            "select id, name from categories c left join user_categories uc on c.id = uc.category_id where uc.user_id = @UserId;",
+            {| UserId = this.userId |})
         let categoryNamesMap = categories |> Seq.map (fun c  -> (c.Id, c.Name)) |> Map.ofSeq
         
         let last5expenses = conn.Query<Expense>("
@@ -78,8 +80,7 @@ where e.user_id = @UserId order by created desc limit 5;", {| UserId = this.user
     [<HttpDelete>]
     member this.DeleteExpense(id: int) =
         let conn = ConnectionProvider.conn
-        let execute = conn.Execute("delete from expenses where id = @Id and user_id = @UserId", {| Id = id; UserId = this.userId |})
-        Console.WriteLine(execute)
+        conn.Execute("delete from expenses where id = @Id and user_id = @UserId", {| Id = id; UserId = this.userId |}) |> ignore
         this.RedirectToAction("index")
 
     [<ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)>]

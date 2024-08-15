@@ -26,12 +26,12 @@
             <div class="text-center">
                 <table class="table">
                     <thead>
-                        <tr>
-                            <th>Částka</th>
-                            <th>Popis</th>
-                            <th>Datum</th>
-                            <th></th>
-                        </tr>
+                    <tr>
+                        <th>Částka</th>
+                        <th>Popis</th>
+                        <th>Datum</th>
+                        <th></th>
+                    </tr>
                     </thead>
                     <tbody>
                     @foreach (var expense in Model.Expenses)
@@ -51,5 +51,6 @@
                 </table>
             </div>
         </form>
+        <a href="@Url.Action("ManageUserCategories", "User")">Spravovat kategorie</a>
     </section>
 </div>

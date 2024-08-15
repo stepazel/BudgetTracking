@@ -3,13 +3,14 @@ namespace BudgetTrackingApp.Controllers
 open System
 open System.Security.Cryptography
 open System.Text
+open BudgetTrackingApp.Models.InsightsModel
 open BudgetTrackingApp.Models.UserpageModel
 open BudgetTrackingApp.Repositories
 open Microsoft.AspNetCore.Authorization
-open Microsoft.AspNetCore.Http
 open Microsoft.AspNetCore.Mvc
 open Microsoft.Extensions.Logging
 open Microsoft.AspNetCore.Authentication.Cookies
+open Dapper
 
 open System.Security.Claims
 open Microsoft.AspNetCore.Authentication
@@ -17,6 +18,11 @@ open Microsoft.AspNetCore.Authentication
 type UserController(logger: ILogger<UserController>) =
     inherit Controller()
 
+    member this.userId =
+        this.HttpContext.User.Claims
+        |> Seq.tryFind (fun claim -> claim.Type = "Id")
+        |> Option.get
+        |> fun claim -> claim.Value |> Convert.ToInt32
     member this.Index() = this.View()
 
     member this.SignUp() = this.View()
@@ -100,3 +106,40 @@ type UserController(logger: ILogger<UserController>) =
 
         Async.RunSynchronously(signOutTask)
         this.RedirectToAction("index")
+        
+    [<Authorize>]
+    member this.ManageUserCategories() =
+        let conn = ConnectionProvider.conn
+        let existingCategories = conn.Query<Category>("select id, name from categories")
+        let userCategories = conn.Query<Category>(
+            "select id, name from categories c left join user_categories uc on c.id = uc.category_id where uc.user_id = @UserId;",
+            {| UserId = this.userId; |})
+        
+        this.View({ExistingCategories = existingCategories; UserCategories = userCategories })
+        
+    [<Authorize>]
+    [<HttpPost>]
+    member this.AddCategory(categoryId: int) =
+        let conn = ConnectionProvider.conn
+        conn.Execute("insert into user_categories (user_id, category_id) values (@UserId, @CategoryId)",
+                     {| UserId = this.userId; CategoryId = categoryId |}) |> ignore
+        this.RedirectToAction("ManageUserCategories")
+        
+    [<Authorize>]
+    [<HttpPost>]
+    member this.RemoveCategory(categoryId: int) =
+        let conn = ConnectionProvider.conn
+        conn.Execute("delete from user_categories where user_id = @UserId and category_id = @CategoryId",
+                     {| UserId = this.userId; CategoryId = categoryId |}) |> ignore
+        this.RedirectToAction("ManageUserCategories")
+        
+    member this.CreateCategory(name: string) =
+        let conn = ConnectionProvider.conn
+        let existsAlready = conn.QuerySingle<bool>("select count(1) from categories where name = @Name", {| Name = name |})
+        if existsAlready = false then
+            conn.Execute("insert into categories (name) values (@Name)", {| Name = name |}) |> ignore
+        this.RedirectToAction("ManageUserCategories")
+        
+        
+        
+    
