@@ -13,6 +13,5 @@ let configuration =
                 .Build()
 
 let databasePassword = if Environment.MachineName = "LT-STZE" then "admin" else Environment.GetEnvironmentVariable("DATABASE_PASSWORD")
-let connection = $"""{configuration.GetSection("ConnectionString").Value}Password={databasePassword};""" |> NpgsqlDataSource.Create
                     
 let conn = new NpgsqlConnection($"""{configuration.GetSection("ConnectionString").Value}Password={databasePassword};""") :> IDbConnection

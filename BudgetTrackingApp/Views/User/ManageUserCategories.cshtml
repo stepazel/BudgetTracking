@@ -1,56 +1,53 @@
 @model BudgetTrackingApp.Models.UserpageModel.ManageCategoriesModel
 
 @{
-    ViewBag.Title = "Mé kategorie";
+  ViewBag.Title = "Mé kategorie";
 }
 <h3 class="text-center">Přidat kategorii</h3>
 
 <div class="text-center">
-    <form method="post">
-        <div class="text-center">
-            <input class="form-control" name="name" type="text" placeholder="Název kategorie"/>
-        </div>
-        <div class="text-center">
-            <input class="text-center" style="width: 80%" hx-post="@Url.Action("CreateCategory", "User")"
-                   hx-target="body" hx-swap="innerHTML" type="submit" name="submit" value="Vytvořit"/>
-        </div>
-    </form>
+  <form method="post">
+    <div class="text-center">
+      <input class="form-control" name="name" type="text" placeholder="Název kategorie"/>
+    </div>
+    <div class="text-center">
+      <input class="text-center" style="width: 80%" hx-post="@Url.Action("CreateCategory", "User")"
+             hx-target="body" hx-swap="innerHTML" type="submit" name="submit" value="Vytvořit"/>
+    </div>
+  </form>
 </div>
 <h3 class="text-center">Mé kategorie</h3>
 
 <div class="text-center">
-    <table class="table">
-        <thead>
-        <tr>
-            <td>Název</td>
-            <td></td>
+  <table class="table">
+    <thead>
+    <tr>
+      <td>Název</td>
+      <td></td>
+    </tr>
+    </thead>
+    <tbody>
+    @foreach (var category in Model.ExistingCategories)
+    {
+      @if (Model.UserCategories.Contains(category))
+      {
+        <tr class="background">
+          <td>@category.Name</td>
+          <td style="cursor: pointer" hx-target="body" hx-swap="innerHTML" hx-post="@Url.Action("RemoveCategory", "User", new { categoryId = category.Id })">
+            Odebrat
+          </td>
         </tr>
-        </thead>
-        <tbody>
-        @foreach (var category in Model.ExistingCategories)
-        {
-            @if (Model.UserCategories.Contains(category))
-            {
-                <tr class="background">
-                    <td>@category.Name</td>
-                    <td style="cursor: pointer" hx-target="body" hx-swap="innerHTML" hx-post="@Url.Action("RemoveCategory", "User", new { categoryId = category.Id })">
-                        Odebrat
-                    </td>
-                </tr>   
-            }
-            else
-            {
-                <tr>
-                    <td>@category.Name</td>
-                    <td style="cursor: pointer" hx-target="body" hx-swap="innerHTML" hx-post="@Url.Action("AddCategory", "User", new { categoryId = category.Id })">
-                        Přidat
-                    </td>
-                </tr>
-            }
-        }
-        </tbody>
-    </table>
+      }
+      else
+      {
+        <tr>
+          <td>@category.Name</td>
+          <td style="cursor: pointer" hx-target="body" hx-swap="innerHTML" hx-post="@Url.Action("AddCategory", "User", new { categoryId = category.Id })">
+            Přidat
+          </td>
+        </tr>
+      }
+    }
+    </tbody>
+  </table>
 </div>
-
-
-

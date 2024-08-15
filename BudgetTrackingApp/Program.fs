@@ -25,7 +25,6 @@ module Program =
         builder.Services.AddRazorPages()
 
         let app = builder.Build()
-        Dapper.FSharp.SQLite.OptionTypes.register()
 
         if not (builder.Environment.IsDevelopment()) then
             app.UseExceptionHandler("/Home/Error")

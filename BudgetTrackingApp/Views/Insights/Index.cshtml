@@ -1,26 +1,26 @@
 @{
-    ViewData["Title"] = "Útrata";
+  ViewData["Title"] = "Útrata";
 }
 @model BudgetTrackingApp.Models.InsightsModel.Model
 
 <h1 class="pd-5 text-center">Útrata</h1>
 
 <div class="text-center">
-    <table class="table-info">
-        <tr>
-            <th>Kategorie</th>
-            <th>Tento rok</th>
-            <th>Měsíc</th>
-            <th>Týden</th>
-        </tr>
-        @foreach (var category in Model.Categories)
-        {
-            <tr>
-                <td>@category.Name</td>
-                <td>@category.YearlyTotal</td>
-                <td>@category.MonthlyTotal</td>
-                <td>@category.WeeklyTotal</td>
-            </tr>
-        }
-    </table>
+  <table class="table-info">
+    <tr>
+      <th>Kategorie</th>
+      <th>Tento rok</th>
+      <th>Měsíc</th>
+      <th>Týden</th>
+    </tr>
+    @foreach (var category in Model.Categories)
+    {
+      <tr>
+        <td>@category.Name</td>
+        <td>@category.YearlyTotal</td>
+        <td>@category.MonthlyTotal</td>
+        <td>@category.WeeklyTotal</td>
+      </tr>
+    }
+  </table>
 </div>

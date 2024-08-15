@@ -1,56 +1,56 @@
 ﻿@{
-    ViewData["Title"] = "Výdaje";
+  ViewData["Title"] = "Výdaje";
 }
 @model BudgetTrackingApp.Models.HomepageModel
 <h1 class="text-center">Výdaje</h1>
 <div class="text-center" id="parent-div">
-    <section>
-        <form asp-controller="Home" asp-action="AddExpense" method="post">
-            <div class="text-center form-row">
-                <input class="form-control" name="amount" type="number" placeholder="Částka"/>
-                <input autocomplete="off" id="description" class="form-control " name="description" placeholder="Popis výdaje"/>
-            </div>
-            <div class="text-center form-row">
-                <select name="categoryId" class="form-control">
-                    @foreach (var categoryId in Model.Categories.Keys)
-                    {
-                        <option value="@categoryId">@Model.Categories[categoryId]</option>
-                    }
-                </select>
-                <input type="date" class="form-control" name="date" value="@DateTime.Now.ToString("yyyy-MM-dd")"/>
-            </div>
-            <div class="text-center">
-                <input style="width: 80%" hx-post="/Home/Addexpense" hx-target="body" hx-swap="innerHTML" type="submit" name="submit" value="Přidat"/>
-            </div>
-            
-            <div class="text-center">
-                <table class="table">
-                    <thead>
-                    <tr>
-                        <th>Částka</th>
-                        <th>Popis</th>
-                        <th>Datum</th>
-                        <th></th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    @foreach (var expense in Model.Expenses)
-                    {
-                        <tr>
-                            <td>@expense.Amount Kč</td>
-                            <td>@expense.Description</td>
-                            <td>@expense.Created.Date.ToString("d")</td>
-                            <td>
-                                <button hx-delete="/Home/DeleteExpense" value="@expense.Id" name="id" hx-target="body" hx-swap="innerHTML">
-                                    <i class="fa fa-trash-o"></i>
-                                </button>
-                            </td>
-                        </tr>
-                    }
-                    </tbody>
-                </table>
-            </div>
-        </form>
-        <a href="@Url.Action("ManageUserCategories", "User")">Spravovat kategorie</a>
-    </section>
+  <section>
+    <form asp-controller="Home" asp-action="AddExpense" method="post">
+      <div class="text-center form-row">
+        <input class="form-control" name="amount" type="number" placeholder="Částka"/>
+        <input autocomplete="off" id="description" class="form-control " name="description" placeholder="Popis výdaje"/>
+      </div>
+      <div class="text-center form-row">
+        <select name="categoryId" class="form-control">
+          @foreach (var categoryId in Model.Categories.Keys)
+          {
+            <option value="@categoryId">@Model.Categories[categoryId]</option>
+          }
+        </select>
+        <input type="date" class="form-control" name="date" value="@DateTime.Now.ToString("yyyy-MM-dd")"/>
+      </div>
+      <div class="text-center">
+        <input style="width: 80%" hx-post="/Home/Addexpense" hx-target="body" hx-swap="innerHTML" type="submit" name="submit" value="Přidat"/>
+      </div>
+
+      <div class="text-center">
+        <table class="table">
+          <thead>
+          <tr>
+            <th>Částka</th>
+            <th>Popis</th>
+            <th>Datum</th>
+            <th></th>
+          </tr>
+          </thead>
+          <tbody>
+          @foreach (var expense in Model.Expenses)
+          {
+            <tr>
+              <td>@expense.Amount Kč</td>
+              <td>@expense.Description</td>
+              <td>@expense.Created.Date.ToString("d")</td>
+              <td>
+                <button hx-delete="/Home/DeleteExpense" value="@expense.Id" name="id" hx-target="body" hx-swap="innerHTML">
+                  <i class="fa fa-trash-o"></i>
+                </button>
+              </td>
+            </tr>
+          }
+          </tbody>
+        </table>
+      </div>
+    </form>
+    <a href="@Url.Action("ManageUserCategories", "User")">Spravovat kategorie</a>
+  </section>
 </div>

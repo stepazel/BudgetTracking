@@ -2,10 +2,8 @@
 open BudgetTrackingApp.Repositories.DatabaseModels
 open System
 open System.Diagnostics
-open BudgetTrackingApp.Repositories
 open Microsoft.AspNetCore.Authorization
 open Microsoft.AspNetCore.Mvc
-open Microsoft.Extensions.Logging
 open Dapper
 
 open BudgetTrackingApp.Models
@@ -15,17 +13,10 @@ module ActionResult =
         res |> Async.StartAsTask
 
 [<Authorize>]
-type HomeController(logger: ILogger<HomeController>) =
-    inherit Controller()
-
-    member this.userId =
-        this.HttpContext.User.Claims
-        |> Seq.tryFind (fun claim -> claim.Type = "Id")
-        |> Option.get
-        |> fun claim -> claim.Value |> Convert.ToInt32
+type HomeController() =
+    inherit BaseController()
 
     member this.Index() =
-        let conn = ConnectionProvider.conn
         let totalsQuery = """
         select
             coalesce(sum(amount), 0) as Total,
@@ -35,14 +26,14 @@ type HomeController(logger: ILogger<HomeController>) =
         from expenses
         where user_id = @UserId
         """
-        let totals = conn.QuerySingle<TotalsResult>(totalsQuery, {| UserId = this.userId |})
+        let totals = this.Conn.QuerySingle<TotalsResult>(totalsQuery, {| UserId = this.userId |})
 
-        let categories = conn.Query<Category>(
+        let categories = this.Conn.Query<Category>(
             "select id, name from categories c left join user_categories uc on c.id = uc.category_id where uc.user_id = @UserId;",
             {| UserId = this.userId |})
         let categoryNamesMap = categories |> Seq.map (fun c  -> (c.Id, c.Name)) |> Map.ofSeq
         
-        let last5expenses = conn.Query<Expense>("
+        let last5expenses = this.Conn.Query<Expense>("
 select e.id, description, amount, created, c.name as CategoryName
 from expenses e join categories c on e.category_id = c.id
 where e.user_id = @UserId order by created desc limit 5;", {| UserId = this.userId |})
@@ -58,8 +49,6 @@ where e.user_id = @UserId order by created desc limit 5;", {| UserId = this.user
         
         
     member this.AddExpense(description: string, amount: int, categoryId: int, date: DateTime) =
-        let conn = ConnectionProvider.conn
-        
         let expense =
             { Id = Nullable()
               Description = description
@@ -72,15 +61,14 @@ where e.user_id = @UserId order by created desc limit 5;", {| UserId = this.user
          INSERT INTO expenses (category_id, amount, description, created, user_id)
          VALUES (@CategoryId, @Amount, @Description, @Created, @UserId);
         """
-        conn.Execute(sql, expense) |> ignore
+        this.Conn.Execute(sql, expense) |> ignore
         this.RedirectToAction("Index")
 
     member this.Privacy() = this.View()
             
     [<HttpDelete>]
     member this.DeleteExpense(id: int) =
-        let conn = ConnectionProvider.conn
-        conn.Execute("delete from expenses where id = @Id and user_id = @UserId", {| Id = id; UserId = this.userId |}) |> ignore
+        this.Conn.Execute("delete from expenses where id = @Id and user_id = @UserId", {| Id = id; UserId = this.userId |}) |> ignore
         this.RedirectToAction("index")
 
     [<ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)>]
