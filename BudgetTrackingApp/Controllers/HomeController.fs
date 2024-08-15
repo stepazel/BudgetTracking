@@ -74,36 +74,10 @@ where e.user_id = @UserId order by created desc limit 5;", {| UserId = this.user
         this.RedirectToAction("Index")
 
     member this.Privacy() = this.View()
-
-    [<HttpPost>]
-    member this.EditExpense(id: int, description: string, amount: int, category: string) =
-        let command = ConnectionProvider.connection.CreateCommand()
-
-        command.CommandText <- "select user_id from expenses where id = @id"
-        command.Parameters.AddWithValue("@id", id) |> ignore
-
-        let userId = command.ExecuteScalar() |> Convert.ToInt32
-
-        if userId = this.userId then
-            command.CommandText <- "update expenses set (description, amount, category) = (@description, @amount, @category) where id = @expense_id"
-            command.Parameters.AddWithValue("@expense_id", id) |> ignore
-            command.Parameters.AddWithValue("@description", description) |> ignore
-            command.Parameters.AddWithValue("@amount", amount) |> ignore
-            command.Parameters.AddWithValue("@category", category) |> ignore
-            command.ExecuteNonQuery() |> ignore
-            this.RedirectToAction("index")
-        else
-            this.RedirectToAction("index")
             
     [<HttpDelete>]
     member this.DeleteExpense(id: int) =
-        // let command = ConnectionProvider.connection.CreateCommand()
-        // command.CommandText <- "delete from expenses where id = @id and user_id = @user_id"
-        // command.Parameters.AddWithValue("@id", id) |> ignore
-        // command.Parameters.AddWithValue("@user_id", this.userId) |> ignore
-        // command.ExecuteNonQuery() |> ignore
         let conn = ConnectionProvider.conn
-        // TODO tohle nejak nefunguje, odstrani to 0 expenses :D 
         let execute = conn.Execute("delete from expenses where id = @Id and user_id = @UserId", {| Id = id; UserId = this.userId |})
         Console.WriteLine(execute)
         this.RedirectToAction("index")
