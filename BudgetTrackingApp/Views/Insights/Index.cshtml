@@ -9,18 +9,67 @@
   <table class="table-info">
     <tr>
       <th>Kategorie</th>
-      <th>Tento rok</th>
-      <th>Měsíc</th>
-      <th>Týden</th>
+      @foreach (var category in Model.Categories)
+      {
+      <th>@category.Name</th>
+      }
     </tr>
-    @foreach (var category in Model.Categories)
-    {
-      <tr>
-        <td>@category.Name</td>
-        <td>@category.YearlyTotal</td>
-        <td>@category.MonthlyTotal</td>
-        <td>@category.WeeklyTotal</td>
-      </tr>
-    }
+    <tr>
+      <td>Od začátku</td>
+      @foreach (var category in Model.Categories)
+      {
+      <td>@category.Total</td>
+      }
+    </tr>
+    <tr>
+      <td>Průměr</td>
+      @foreach (var category in Model.Categories)
+      {
+      // TODO this logic should be in the view model  
+      <td>@Math.Round(category.Total / category.Count)</td>
+      }
+    </tr>
+    <tr>
+      <td>Tento rok</td>
+      @foreach (var category in Model.Categories)
+      {
+      <td>@category.YearTotal</td>
+      }
+    </tr>
+    <tr>
+      <td>Roční průměr</td>
+      @foreach (var category in Model.Categories)
+      {
+      <td>@Math.Round(category.YearTotal / category.YearCount)</td>
+      }
+    </tr>
+    <tr>
+      <td>Měsíc</td>
+      @foreach (var category in Model.Categories)
+      {
+      <td>@category.MonthTotal</td>
+      }
+    </tr>
+    <tr>
+      <td>Měsíční průměr</td>
+      @foreach (var category in Model.Categories)
+      {
+      <td>@Math.Round(category.MonthTotal / category.MonthCount)</td>
+      }
+    </tr>
+    <tr>
+      <td>Týden</td>
+      @foreach (var category in Model.Categories)
+      {
+      <td>@category.WeekTotal</td>
+      }
+    </tr>
+    <tr>
+      <td>Týdenní průměr</td>
+      @foreach (var category in Model.Categories)
+      {
+      <td>@Math.Round(category.WeekTotal / category.WeekCount)</td>
+      }
+    </tr>
   </table>
 </div>
