@@ -2,6 +2,7 @@ namespace BudgetTrackingApp
 
 #nowarn "20"
 
+open System
 open Microsoft.AspNetCore.Authentication.Cookies
 open Microsoft.AspNetCore.Builder
 open Microsoft.Extensions.DependencyInjection
@@ -25,6 +26,8 @@ module Program =
         builder.Services.AddRazorPages()
 
         let app = builder.Build()
+        
+        AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true)
 
         if not (builder.Environment.IsDevelopment()) then
             app.UseExceptionHandler("/Home/Error")
