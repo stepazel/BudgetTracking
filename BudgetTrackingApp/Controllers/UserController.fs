@@ -27,7 +27,7 @@ type UserController() =
             |> sha512.ComputeHash
             |> Seq.fold (fun hash byte -> hash + byte.ToString("x2")) ""
 
-        this.Conn.Execute("insert into users (username, password) values (@username, @password)", {|Username = username; Password = password|}) |> ignore
+        this.Conn.Execute("insert into users (username, password) values (@username, @password)", {|Username = username; Password = hashedPassword|}) |> ignore
         this.RedirectToAction("index", "home")
 
     member this.Login(username: string, password: string) =
