@@ -22,6 +22,11 @@
       <div class="text-center">
         <input style="width: 80%; font-size: 16px" hx-post="/Home/Addexpense" hx-target="body" hx-swap="innerHTML" type="submit" name="submit" value="Přidat"/>
       </div>
+      
+      <div class="text-center">
+        <p>Za týden: <b>@Model.WeeklyTotal </b> Kč
+        Za měsíc: <b>@Model.MonthlyTotal </b> Kč</p>
+      </div>
 
       <div class="text-center">
         <table class="table">
