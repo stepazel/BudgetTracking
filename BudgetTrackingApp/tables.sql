@@ -31,4 +31,44 @@ create table user_categories
 );
 
 alter table expenses 
-add category_id integer references categories
+add category_id integer references categories;
+
+-- migration to Heroku
+create table expenses
+(
+    id          serial
+        primary key,
+    description text             not null,
+    amount      double precision not null,
+    created     timestamp        not null,
+    user_id     integer
+        references users,
+    category_id integer
+        references categories
+);
+
+-- alter table expenses ??
+--     owner to db;
+
+create table users
+(
+    id       serial
+        primary key,
+    username text not null,
+    password text not null
+);
+
+create table categories
+(
+    id   serial
+        primary key,
+    name text not null
+);
+
+create table user_categories
+(
+    category_id integer
+        references categories,
+    user_id     integer
+        references users
+);
