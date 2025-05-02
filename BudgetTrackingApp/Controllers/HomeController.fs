@@ -58,12 +58,13 @@ select inputted from expenses where user_id = @UserId order by inputted desc lim
               Description = description
               Amount = amount
               Created = date
+              Inputted = DateTime.Now
               CategoryId = categoryId
               UserId = this.userId }
  
         let sql = """
-         INSERT INTO expenses (category_id, amount, description, created, user_id)
-         VALUES (@CategoryId, @Amount, @Description, @Created, @UserId);
+         INSERT INTO expenses (category_id, amount, description, created, inputted, user_id)
+         VALUES (@CategoryId, @Amount, @Description, @Created, @Inputted, @UserId);
         """
         this.Conn.Execute(sql, expense) |> ignore
         this.RedirectToAction("Index")

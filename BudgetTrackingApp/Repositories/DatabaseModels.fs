@@ -2,6 +2,13 @@ module BudgetTrackingApp.Repositories.DatabaseModels
 
 open System
 
-type Expense = {Id: System.Nullable<int>; Description: string; Amount: float; Created: DateTime; CategoryId: int; UserId: int}
+type Expense =
+    { Id: System.Nullable<int>
+      Description: string
+      Amount: float
+      Created: DateTime
+      Inputted: DateTime
+      CategoryId: int
+      UserId: int }
 
-type Category = {Id: int; Name: string}
+type Category = { Id: int; Name: string }
