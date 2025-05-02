@@ -1,11 +1,15 @@
 ﻿
 .nav {
+    position: fixed;
+    top: 0;
+    width: 100%;
     margin: 0;
     background-color: var(--main-bg-color);
     display: flex;
     justify-content: space-between;
     list-style-type: none;
     padding: 0;
+    z-index: 1000; /* Ensures it stays above other elements */
 }
 
 ul li {
@@ -92,17 +96,23 @@ table td {
 }
 
 .footer {
-    position: absolute;
+    position: fixed;
     bottom: 0;
     width: 100%;
     padding: 1rem;
     background-color: var(--main-bg-color);
     color: var(--main-text-color);
-    
+    transition: transform 0.3s ease-in-out;
+    transform: translateY(0);
+}
+
+.footer.hidden {
+    transform: translateY(100%);
 }
 
 body {
     margin: 0;
+    padding-top: 40px;
     font-family: Arial, sans-serif;
     background-color: floralwhite;
     color: var(--main-text-color);

@@ -37,6 +37,9 @@ type HomeController() =
 select e.id, description, amount, created, c.name as CategoryName
 from expenses e join categories c on e.category_id = c.id
 where e.user_id = @UserId order by created desc limit 5;", {| UserId = this.userId |})
+        
+        let lastEntryDate = this.Conn.ExecuteScalar<DateTime>("
+select inputted from expenses where user_id = @UserId order by inputted desc limit 1;", {| UserId = this.userId |})
 
         this.View({
             Expenses = last5expenses
@@ -45,6 +48,7 @@ where e.user_id = @UserId order by created desc limit 5;", {| UserId = this.user
             YearlyTotal = totals.YearlyTotal
             MonthlyTotal = totals.MonthlyTotal
             WeeklyTotal = totals.WeeklyTotal
+            LastEntry = lastEntryDate
         })
         
         

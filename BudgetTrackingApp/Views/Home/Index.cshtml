@@ -1,6 +1,7 @@
 ﻿@{
   ViewData["Title"] = "Výdaje";
 }
+@using System.Globalization
 @model BudgetTrackingApp.Models.HomepageModel
 <h1 class="text-center">Výdaje</h1>
 <div class="text-center" id="parent-div">
@@ -44,7 +45,7 @@
             <tr>
               <td>@expense.Amount Kč</td>
               <td>@expense.Description</td>
-              <td>@expense.Created.Date.ToString("d")</td>
+              <td>@expense.Created.Date.ToString("dd.MM.yy")</td>
               <td>
                 <button hx-delete="/Home/DeleteExpense" value="@expense.Id" name="id" hx-target="body" hx-swap="innerHTML">
                   <i class="fa fa-trash-o"></i>
@@ -57,7 +58,10 @@
       </div>
     </form>
     <div class="text-center">
-    <a class="link text-center" href="@Url.Action("ManageUserCategories", "User")">Spravovat kategorie</a>
+      Poslední výdaj byl zadán&nbsp; <b>@Model.LastEntry.ToString("d. MMMM", new CultureInfo("cs-CZ"))</b>.
+    </div>
+    <div class="text-center">
+      <a class="link text-center" href="@Url.Action("", "Expenses")">Všechny výdaje</a>
     </div>
   </section>
 </div>
