@@ -11,11 +11,17 @@
 <header>
   <nav>
     <ul class="nav">
-      <li class="nav-item">
-        <a class="brand" asp-area="" asp-controller="Home" asp-action="Index">Správce výdajů</a>
-      </li>
+      @if (ViewContext.RouteData.Values["controller"]?.ToString() != "Home")
+      {
+        <li class="nav-item">
+          <a class="brand" asp-area="" asp-controller="Home" asp-action="Index">Domů</a>
+        </li>
+      }
       <li class="nav-item">
         <a class="nav-link" asp-controller="Insights" asp-action="Index">Statistiky</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" asp-controller="User" asp-action="ManageUserCategories">Kategorie</a>
       </li>
       <li class="nav-item">
         @if (Context.User.Identity?.IsAuthenticated == true)
@@ -31,11 +37,9 @@
   </nav>
 </header>
 
-<div class="">
-  <main role="main" class="pb-3">
-    @RenderBody()
-  </main>
-</div>
+<main class="pb-3">
+  @RenderBody()
+</main>
 
 <footer class="footer">
   Neutrácej tolik.
@@ -45,6 +49,20 @@
 
 
 <script src="~/js/site.js" asp-append-version="true"></script>
+
+<script>
+  let lastScrollY = window.scrollY;
+  const footer = document.querySelector('.footer');
+
+  window.addEventListener('scroll', () => {
+    if (window.scrollY > lastScrollY) {
+      footer.classList.add('hidden');
+    } else {
+      footer.classList.remove('hidden');
+    }
+    lastScrollY = window.scrollY;
+  });
+</script>
 
 @await RenderSectionAsync("Scripts", required: false)
 </body>
