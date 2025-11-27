@@ -1,6 +1,0 @@
-@backend_HostAddress = https://localhost:7236
-
-GET {{backend_HostAddress}}/api/expenses/
-Accept: application/json
-
-###
