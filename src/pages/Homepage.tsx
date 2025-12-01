@@ -33,8 +33,44 @@ export default function Homepage() {
         }
         fetchExpenses();
     })
+
+    const handleSubmit = async (event: any) => {
+        // TODO
+        // ziskat kategorie a posilat je do formulare
+        // https://supabase.com/docs/guides/api/rest/generating-types - nejdrive ale updatovat user_categories, zmenit foreign key
+        // lepe ohandlovat pridani vydaje - idealne jen setExpenses
+        
+        event.preventDefault();
+        const formData = new FormData(event.target);
+        const response = await supabase.auth.getUser();
+        const userId = response.data.user?.id;
+        const {data, error} = await supabase.from('expenses').insert({
+            description: formData.get('description') as string,
+            amount: parseFloat(formData.get('amount') as string),
+            category_id: 1,
+            created: formData.get('date') as string,
+            inputted: new Date().toISOString().split("T")[0],
+            user_id: userId,
+        });
+        
+        if (error) {
+            alert(error.message);
+            return;
+        }
+        
+        setExpenses([...expenses,
+            {
+                description: formData.get('description') as string,
+                amount: parseFloat(formData.get('amount') as string),
+                category: "Potraviny",
+                created: formData.get('date') as Date,
+                inputted: new Date()
+            }
+        ])
+
+    }
     
-    if (expenses.length === 0) return <div>Loading...</div>;
+    if (expenses.length === 0) return <div>Načítání!!!</div>;
 
     return (
         <div className="min-h-dvh flex flex-col bg-background text-foreground">
@@ -108,11 +144,13 @@ export default function Homepage() {
                             </div>
                             <Separator />
                             <div className="p-4">
+                                <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
                                 <FieldSet>
                                     <Field orientation="responsive">
                                         <FieldContent>
                                             <input
                                                 type="text"
+                                                name="description"
                                                 placeholder="Popis výdaje"
                                                 className="h-10 w-full rounded-md border bg-background px-3 text-sm"
                                             />
@@ -122,6 +160,7 @@ export default function Homepage() {
                                         <FieldContent>
                                             <input
                                                 type="number"
+                                                name="amount"
                                                 placeholder="Částka"
                                                 className="h-10 w-full rounded-md border bg-background px-3 text-sm"
                                             />
@@ -129,7 +168,7 @@ export default function Homepage() {
                                     </Field>
                                     <Field>
                                         <FieldContent>
-                                            <select className="h-10 w-full rounded-md border bg-background px-3 text-sm">
+                                            <select name="category" className="h-10 w-full rounded-md border bg-background px-3 text-sm">
                                                 <option defaultValue="neco">Potraviny</option>
                                                 <option defaultValue="dalsi">Pití</option>
                                             </select>
@@ -139,17 +178,19 @@ export default function Homepage() {
                                         <FieldContent>
                                             <input
                                                 type="date"
+                                                name="date"
                                                 className="h-10 w-full rounded-md border bg-background px-3 text-sm"
                                                 defaultValue={new Date().toISOString().split("T")[0]}
                                             />
                                         </FieldContent>
                                     </Field>
                                     <div className="flex justify-center gap-2 pt-2">
-                                        <button className="h-9 w-60 rounded-md bg-primary px-3 text-primary-foreground text-sm">
+                                        <button type="submit" className="h-9 w-60 rounded-md bg-primary px-3 text-primary-foreground text-sm">
                                             Přidat
                                         </button>
                                     </div>
                                 </FieldSet>
+                                </form>
                             </div>
                         </section>
                     </main>
