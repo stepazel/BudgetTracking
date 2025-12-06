@@ -23,8 +23,9 @@ export default function Homepage() {
     const [expenses, setExpenses] = useState<Expense[]>([]);
     useEffect( () => {
         async function fetchExpenses() {
-            
-            const response = await supabase.from('expenses').select('*');
+            const response = await supabase
+                .from('expenses')
+                .select('id, description, amount, created, categories ( name )');
             if (response.status === 200 && response.data !== null) {
                 setExpenses(response.data);
             } else {
@@ -32,7 +33,22 @@ export default function Homepage() {
             }
         }
         fetchExpenses();
-    })
+    }, [])
+
+    // Categories belonging to current user
+    const [categories, setCategories] = useState<{ id: number; name: string }[]>([]);
+    useEffect(() => {
+        async function fetchUserCategories() {
+            const response = await supabase.from('categories').select('*');
+            if (response.status === 200 && response.data !== null) {
+                setCategories(response.data);
+            } else {
+                console.error(response.error);
+            }
+
+        }
+        fetchUserCategories();
+    }, []);
 
     const handleSubmit = async (event: any) => {
         // TODO
@@ -47,7 +63,7 @@ export default function Homepage() {
         const {data, error} = await supabase.from('expenses').insert({
             description: formData.get('description') as string,
             amount: parseFloat(formData.get('amount') as string),
-            category_id: 1,
+            category_id: formData.get('category_id') as int,
             created: formData.get('date') as string,
             inputted: new Date().toISOString().split("T")[0],
             user_id: userId,
@@ -62,7 +78,7 @@ export default function Homepage() {
             {
                 description: formData.get('description') as string,
                 amount: parseFloat(formData.get('amount') as string),
-                category: "Potraviny",
+                category: categories.find(x => x.id === (formData.get('category_id') as number))!.name,
                 created: formData.get('date') as Date,
                 inputted: new Date()
             }
@@ -70,7 +86,7 @@ export default function Homepage() {
 
     }
     
-    if (expenses.length === 0) return <div>Načítání!!!</div>;
+    // if (expenses.length === 0) return <div>Načítání!!!</div>;
 
     return (
         <div className="min-h-dvh flex flex-col bg-background text-foreground">
@@ -113,7 +129,7 @@ export default function Homepage() {
                                 <nav className="flex flex-col gap-1">
                                     {expenses.map((expense) => (
                                         <div key={expense.description} className="text-left rounded-md px-3 py-2">
-                                            {expense.description} - {expense.amount}
+                                            {expense.description} - {expense.amount} - {expense.categories.name}
                                         </div>
                                     ))}
                                 </nav>
@@ -168,9 +184,12 @@ export default function Homepage() {
                                     </Field>
                                     <Field>
                                         <FieldContent>
-                                            <select name="category" className="h-10 w-full rounded-md border bg-background px-3 text-sm">
-                                                <option defaultValue="neco">Potraviny</option>
-                                                <option defaultValue="dalsi">Pití</option>
+                                            <select name="category_id" className="h-10 w-full rounded-md border bg-background px-3 text-sm">
+                                                {
+                                                    categories.map((category) => (
+                                                        <option key={category.id} value={category.id}>{category.name}</option>
+                                                    ))
+                                                }
                                             </select>
                                         </FieldContent>
                                     </Field>
