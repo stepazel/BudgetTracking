@@ -25,7 +25,8 @@ export default function Homepage() {
         async function fetchExpenses() {
             const response = await supabase
                 .from('expenses')
-                .select('id, description, amount, created, categories ( name )');
+                .select('id, description, amount, created, categories ( name )')
+                .order('id', { ascending: false });
             if (response.status === 200 && response.data !== null) {
                 // @ts-ignore
                 setExpenses(response.data);
@@ -71,7 +72,7 @@ export default function Homepage() {
         
         if (data && Array.isArray(data) && data.length > 0) {
             // @ts-ignore
-            setExpenses([...expenses, data[0] as Expense]);
+            setExpenses([data[0] as Expense, ...expenses]);
         }
     }
     
