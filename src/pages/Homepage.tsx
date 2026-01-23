@@ -27,6 +27,7 @@ export default function Homepage() {
                 .from('expenses')
                 .select('id, description, amount, created, categories ( name )');
             if (response.status === 200 && response.data !== null) {
+                // @ts-ignore
                 setExpenses(response.data);
             } else {
                 console.error(response.error);
@@ -69,6 +70,7 @@ export default function Homepage() {
         }
         
         if (data && Array.isArray(data) && data.length > 0) {
+            // @ts-ignore
             setExpenses([...expenses, data[0] as Expense]);
         }
     }
