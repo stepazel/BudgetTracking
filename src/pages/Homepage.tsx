@@ -51,106 +51,56 @@ export default function Homepage() {
     }, []);
 
     const handleSubmit = async (event: any) => {
-        // TODO
-        // ziskat kategorie a posilat je do formulare
-        // https://supabase.com/docs/guides/api/rest/generating-types - nejdrive ale updatovat user_categories, zmenit foreign key
-        // lepe ohandlovat pridani vydaje - idealne jen setExpenses
-        
         event.preventDefault();
         const formData = new FormData(event.target);
         const response = await supabase.auth.getUser();
         const userId = response.data.user?.id;
-        const {data, error} = await supabase.from('expenses').insert({
+        const { data, error } = await supabase.from('expenses').insert({
             description: formData.get('description') as string,
             amount: parseFloat(formData.get('amount') as string),
-            category_id: formData.get('category_id') as int,
+            category_id: Number(formData.get('category_id')),
             created: formData.get('date') as string,
-            inputted: new Date().toISOString().split("T")[0],
             user_id: userId,
-        });
+        }).select('id, description, amount, created, categories ( name )');
         
         if (error) {
             alert(error.message);
             return;
         }
         
-        setExpenses([...expenses,
-            {
-                description: formData.get('description') as string,
-                amount: parseFloat(formData.get('amount') as string),
-                category: categories.find(x => x.id === (formData.get('category_id') as number))!.name,
-                created: formData.get('date') as Date,
-                inputted: new Date()
-            }
-        ])
-
+        if (data && Array.isArray(data) && data.length > 0) {
+            setExpenses([...expenses, data[0] as Expense]);
+        }
     }
     
-    // if (expenses.length === 0) return <div>Načítání!!!</div>;
-
+    const handleDeleteExpense = async (id: number) => {
+        const { error } = await supabase
+            .from('expenses')
+            .delete()
+            .eq('id', id);
+        if (error) {
+            alert(error.message);
+            return;
+        }
+        setExpenses(prev => prev.filter(e => e.id !== id));
+    }
+    
     return (
         <div className="min-h-dvh flex flex-col bg-background text-foreground">
-            {/* Header */}
             <header className="sticky top-0 z-10 border-b bg-card/80 backdrop-blur supports-[backdrop-filter]:bg-card/60">
                 <div className="mx-auto w-full max-w-7xl px-4 py-3 flex items-center gap-4">
                     <div className="flex items-center gap-2">
-                        {/*<div className="size-8 rounded-lg bg-primary/10 grid place-items-center text-primary font-bold">*/}
-                        {/*  BT*/}
-                        {/*</div>*/}
                         <span className="text-base font-semibold">Výdaje</span>
                     </div>
 
-                    <div className="ml-auto flex items-center gap-2">
-                        {/* Theme toggle placeholder */}
-                        <button
-                            tabIndex={-1}
-                            className="h-9 px-3 rounded-md border bg-background hover:bg-muted text-sm"
-                            aria-label="Toggle theme"
-                        >
-                            Dark mode
-                        </button>
-                    </div>
                 </div>
             </header>
 
             {/* App Shell */}
             <div className="flex-1">
-                <div className="mx-auto grid w-full max-w-2xl grid-cols-1 md:grid-cols-[240px_1fr] gap-6 px-4 py-6">
-                    {/* Sidebar (hidden on mobile) */}
-                    <aside className="hidden md:block">
-                        <section className="rounded-lg border bg-card">
-                            <div className="p-4">
-                                <h2 className="text-base font-semibold leading-none mb-1">
-                                    Poslední výdaje
-                                </h2>
-                            </div>
-                            <Separator />
-                            <div className="p-4">
-                                <nav className="flex flex-col gap-1">
-                                    {expenses.map((expense) => (
-                                        <div key={expense.description} className="text-left rounded-md px-3 py-2">
-                                            {expense.description} - {expense.amount} - {expense.categories.name}
-                                        </div>
-                                    ))}
-                                </nav>
-                            </div>
-                        </section>
-                    </aside>
-
+                <div className="mx-auto grid w-full max-w-2xl grid-cols-1 gap-6 px-4 py-6">
                     {/* Main content */}
                     <main className="flex flex-col gap-6">
-                        {/* Summary cards */}
-                        {/*<section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">*/}
-                        {/*  {["Balance", "Income", "Expenses", "Savings"].map((title) => (*/}
-                        {/*    <div*/}
-                        {/*      key={title}*/}
-                        {/*      className="rounded-lg border bg-card p-4 flex flex-col gap-2"*/}
-                        {/*    >*/}
-                        {/*      <div className="text-sm text-muted-foreground">{title}</div>*/}
-                        {/*      <div className="text-2xl font-semibold tracking-tight">$0.00</div>*/}
-                        {/*    </div>*/}
-                        {/*  ))}*/}
-                        {/*</section>*/}
 
                         <section className="rounded-lg border bg-card">
                             <div className="p-4">
@@ -212,22 +162,48 @@ export default function Homepage() {
                                 </form>
                             </div>
                         </section>
+                        <section className="rounded-lg border bg-card">
+                            <div className="p-4">
+                                <h2 className="text-base font-semibold leading-none mb-1">
+                                    Výdaje
+                                </h2>
+                            </div>
+                            <Separator />
+                            <div className="p-4 overflow-x-auto">
+                                <table className="w-full text-sm">
+                                    <thead>
+                                    <tr className="text-left border-b">
+                                        <th className="py-2 pr-4">Částka</th>
+                                        <th className="py-2 pr-4">Popis</th>
+                                        <th className="py-2 pr-4">Datum</th>
+                                        <th className="py-2 text-right">Akce</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    {expenses.map((e) => (
+                                        <tr key={e.id} className="border-b last:border-0">
+                                            <td className="py-2 pr-4">{e.amount}</td>
+                                            <td className="py-2 pr-4">{e.description}</td>
+                                            <td className="py-2 pr-4">{new Date(e.created).toLocaleDateString('cs-CZ')}</td>
+                                            <td className="py-2 text-right">
+                                                <button
+                                                    onClick={() => handleDeleteExpense(e.id)}
+                                                    className="h-8 px-3 rounded-md border bg-background hover:bg-muted text-xs"
+                                                >
+                                                    Smazat
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    ))}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </section>
+                        
                     </main>
                 </div>
             </div>
 
-            {/* Mobile bottom nav */}
-            {/*<div className="md:hidden border-t bg-card/80 backdrop-blur supports-[backdrop-filter]:bg-card/60">*/}
-            {/*  <div className="mx-auto max-w-7xl px-4 py-2 grid grid-cols-4 gap-2">*/}
-            {/*    {["Home", "Add", "Budgets", "More"].map((t) => (*/}
-            {/*      <button key={t} className="py-2 text-sm rounded-md hover:bg-muted">*/}
-            {/*        {t}*/}
-            {/*      </button>*/}
-            {/*    ))}*/}
-            {/*  </div>*/}
-            {/*</div>*/}
-
-            {/* Footer */}
             <footer className="border-t bg-card">
                 <div className="mx-auto w-full max-w-7xl px-4 py-6 text-xs text-muted-foreground">
                     © {new Date().getFullYear()} Neutrácej tolik

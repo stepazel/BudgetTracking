@@ -1,7 +1,7 @@
 export type Expense = {
-    description: string,
-    amount: number,
-    category: string,
-    created: Date,
-    inputted: Date
+    id: number;
+    description: string;
+    amount: number;
+    created: string; // ISO date string from DB
+    categories: { name: string } | null;
 }
