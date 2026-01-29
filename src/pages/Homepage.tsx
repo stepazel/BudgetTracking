@@ -26,7 +26,7 @@ export default function Homepage() {
             const response = await supabase
                 .from('expenses')
                 .select('id, description, amount, created, categories ( name )')
-                .order('id', { ascending: false });
+                .order('created', { ascending: false });
             if (response.status === 200 && response.data !== null) {
                 // @ts-ignore
                 setExpenses(response.data);
@@ -185,7 +185,7 @@ export default function Homepage() {
                                     <tbody>
                                     {expenses.map((e) => (
                                         <tr key={e.id} className="border-b last:border-0">
-                                            <td className="py-2 pr-4">{e.amount}</td>
+                                            <td className="py-2 pr-4">{e.amount} Kč</td>
                                             <td className="py-2 pr-4">{e.description}</td>
                                             <td className="py-2 pr-4">{new Date(e.created).toLocaleDateString('cs-CZ')}</td>
                                             <td className="py-2 text-right">
