@@ -118,9 +118,9 @@ export default function Homepage() {
                                     <Field orientation="responsive">
                                         <FieldContent>
                                             <input
-                                                type="text"
-                                                name="description"
-                                                placeholder="Popis výdaje"
+                                                type="number"
+                                                name="amount"
+                                                placeholder="Částka"
                                                 className="h-10 w-full rounded-md border bg-background px-3 text-sm"
                                             />
                                         </FieldContent>
@@ -128,9 +128,9 @@ export default function Homepage() {
                                     <Field orientation="responsive">
                                         <FieldContent>
                                             <input
-                                                type="number"
-                                                name="amount"
-                                                placeholder="Částka"
+                                                type="text"
+                                                name="description"
+                                                placeholder="Popis výdaje"
                                                 className="h-10 w-full rounded-md border bg-background px-3 text-sm"
                                             />
                                         </FieldContent>
