@@ -12,6 +12,8 @@ public class IndexModel(IDbConnection dbConnection) : PageModel
     public List<Category> UserCategories { get; set; } = [];
 
     [BindProperty] public Expense NewExpense { get; set; } = new();
+    
+    // TODO login/user session
 
     public void OnGet()
     {
@@ -38,12 +40,13 @@ public class IndexModel(IDbConnection dbConnection) : PageModel
     {
         if (!ModelState.IsValid)
         {
-            LoadExpenses();
             return Page();
         }
 
+        NewExpense.UserId = new Guid("338e6139-b494-4c2f-86c5-d800e24f9058");
+        NewExpense.Inputted = DateTime.Now;
         dbConnection.Execute(
-            "INSERT INTO Expenses (Description, Amount, Created) VALUES (@Description, @Amount, @Created)",
+            "INSERT INTO Expenses (Description, Amount, Created, Inputted, Category_Id, User_Id) VALUES (@Description, @Amount, @Created, @Inputted, @CategoryId, @UserId)",
             NewExpense);
 
         return RedirectToPage();

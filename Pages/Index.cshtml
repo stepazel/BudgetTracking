@@ -14,18 +14,18 @@
         }
     </ul>
 
-    <form>
+    <form method="post">
         <label>
             Částka
-            <input type="number"/>
+            <input asp-for="NewExpense.Amount" type="number"/>
         </label>
         <label>
             Popis
-            <input type="text"/>
+            <input asp-for="NewExpense.Description" type="text"/>
         </label>
         <label>
             Kategorie
-            <select>
+            <select asp-for="NewExpense.CategoryId">
                 @foreach (var category in Model.UserCategories)
                 {
                     <option value="@category.Id">@category.Name</option>
@@ -34,7 +34,7 @@
         </label>
         <label>
             Datum
-            <input type="date" value="@DateTime.Today.ToString("yyyy-MM-dd")"/>
+            <input asp-for="NewExpense.Created" type="date" value="@DateTime.Today.ToString("yyyy-MM-dd")"/>
         </label>
         <button>
             Vytvořit

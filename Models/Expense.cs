@@ -14,6 +14,6 @@ public class Expense
     public DateTime Created { get; set; }
     public DateTime Inputted { get; set; }
     public int CategoryId { get; set; }
-    public string CategoryName { get; set; }
+    public string? CategoryName { get; set; }
     public Guid UserId { get; set; }
 }
