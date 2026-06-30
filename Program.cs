@@ -3,6 +3,9 @@ using Npgsql;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Zapne automatické mapování snake_case (category_id) na PascalCase (CategoryId)
+Dapper.DefaultTypeMap.MatchNamesWithUnderscores = true;
+
 // Add services to the container.
 builder.Services.AddRazorPages();
 

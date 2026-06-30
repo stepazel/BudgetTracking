@@ -6,6 +6,13 @@
 
 <div>
     <h1>Výdaje</h1>
+    
+    <ul>
+        @foreach (var item in Model.Expenses)
+        {
+            <li>@item.Amount @item.Description @item.CategoryName @item.Created</li>
+        }
+    </ul>
 
     <form>
         <label>
