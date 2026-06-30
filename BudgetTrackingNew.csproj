@@ -5,10 +5,16 @@
         <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
         <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+        <UserSecretsId>02f3e9e9-916a-4eaa-9233-3076dec49faa</UserSecretsId>
     </PropertyGroup>
 
     <ItemGroup>
       <_ContentIncludedByDefault Remove="wwwroot\js\site.js" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Dapper" Version="2.1.79" />
+      <PackageReference Include="Npgsql" Version="10.0.3" />
     </ItemGroup>
 
 </Project>
