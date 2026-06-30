@@ -1,0 +1,35 @@
+﻿@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Doma";
+}
+
+<div>
+    <h1>Výdaje</h1>
+
+    <form>
+        <label>
+            Částka
+            <input type="number"/>
+        </label>
+        <label>
+            Popis
+            <input type="text"/>
+        </label>
+        <label>
+            Kategorie
+            <select>
+                <option>Bydlení</option>
+                <option>Potraviny</option>
+                <option>Zábava</option>
+            </select>
+        </label>
+        <label>
+            Datum
+            <input type="date" value="@DateTime.Today.ToString("yyyy-MM-dd")"/>
+        </label>
+        <button>
+            Vytvořit
+        </button>
+    </form>
+</div>

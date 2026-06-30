@@ -1,0 +1,7 @@
+﻿services:
+  budgettrackingnew:
+    image: budgettrackingnew
+    build:
+      context: .
+      dockerfile: Dockerfile
+
