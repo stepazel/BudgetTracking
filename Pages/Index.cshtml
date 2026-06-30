@@ -26,9 +26,10 @@
         <label>
             Kategorie
             <select>
-                <option>Bydlení</option>
-                <option>Potraviny</option>
-                <option>Zábava</option>
+                @foreach (var category in Model.UserCategories)
+                {
+                    <option value="@category.Id">@category.Name</option>
+                }
             </select>
         </label>
         <label>

@@ -1,10 +1,13 @@
 using System.Data;
 using Npgsql;
 
-var builder = WebApplication.CreateBuilder(args);
-
 // Zapne automatické mapování snake_case (category_id) na PascalCase (CategoryId)
 Dapper.DefaultTypeMap.MatchNamesWithUnderscores = true;
+
+var builder = WebApplication.CreateBuilder(args);
+
+// Přidá podporu pro antiforgery tokeny v hlavičkách (potřebné pro HTMX/AJAX)
+builder.Services.AddAntiforgery(options => options.HeaderName = "X-XSRF-TOKEN");
 
 // Add services to the container.
 builder.Services.AddRazorPages();
