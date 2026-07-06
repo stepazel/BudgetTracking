@@ -6,38 +6,63 @@
 
 <div>
     <h1>Výdaje</h1>
-    
-    <ul>
+
+    <table>
+        <thead>
+        <tr>
+            <td>Částka</td>
+            <td>Výdaj</td>
+            <td>Datum</td>
+            <td>Kategorie</td>
+        </tr>
+        </thead>
+        <tbody>
         @foreach (var item in Model.Expenses)
         {
-            <li>@item.Amount @item.Description @item.CategoryName @item.Created</li>
+            <tr>
+                <td>@item.Amount Kč</td>
+                <td>@item.Description</td>
+                <td>@item.Created.ToString("dd.M")</td>
+                <td>@item.CategoryName</td>
+                <td>
+                    <button>Smazat</button>
+                </td>
+            </tr>
         }
-    </ul>
+        <form method="post">
+            <tr>
+                <td>
+                    <label>
+                        Částka
+                        <input asp-for="NewExpense.Amount" type="number"/>
+                    </label>
+                </td>
+                <td>
+                    <label>
+                        Popis
+                        <input asp-for="NewExpense.Description" type="text"/>
+                    </label>
+                </td>
+                <td>
+                        <select asp-for="NewExpense.CategoryId">
+                            @foreach (var category in Model.UserCategories)
+                            {
+                                <option value="@category.Id">@category.Name</option>
+                            }
+                        </select>
+                </td>
+                <td>
+                    <label>
+                        Datum
+                        <input asp-for="NewExpense.Created" type="date" value="@DateTime.Today.ToString("yyyy-MM-dd")"/>
+                    </label>
+                </td>
+                <td>
+                    <button>Vytvořit</button>
+                </td>
+            </tr>
+        </form>
+        </tbody>
+    </table>
 
-    <form method="post">
-        <label>
-            Částka
-            <input asp-for="NewExpense.Amount" type="number"/>
-        </label>
-        <label>
-            Popis
-            <input asp-for="NewExpense.Description" type="text"/>
-        </label>
-        <label>
-            Kategorie
-            <select asp-for="NewExpense.CategoryId">
-                @foreach (var category in Model.UserCategories)
-                {
-                    <option value="@category.Id">@category.Name</option>
-                }
-            </select>
-        </label>
-        <label>
-            Datum
-            <input asp-for="NewExpense.Created" type="date" value="@DateTime.Today.ToString("yyyy-MM-dd")"/>
-        </label>
-        <button>
-            Vytvořit
-        </button>
-    </form>
 </div>

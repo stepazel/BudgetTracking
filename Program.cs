@@ -1,5 +1,6 @@
 using System.Data;
 using Npgsql;
+using Microsoft.AspNetCore.Authentication.Cookies;
 
 // Zapne automatické mapování snake_case (category_id) na PascalCase (CategoryId)
 Dapper.DefaultTypeMap.MatchNamesWithUnderscores = true;
@@ -11,6 +12,22 @@ builder.Services.AddAntiforgery(options => options.HeaderName = "X-XSRF-TOKEN");
 
 // Add services to the container.
 builder.Services.AddRazorPages();
+
+builder.Services.AddScoped(_ => new Supabase.Client(
+    builder.Configuration["Supabase:Url"]!,
+    builder.Configuration["Supabase:Key"]!,
+    new Supabase.SupabaseOptions
+    {
+        AutoRefreshToken = true,
+        AutoConnectRealtime = true
+    }
+));
+
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+    .AddCookie(options =>
+    {
+        options.LoginPath = "/Login";
+    });
 
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddScoped<IDbConnection>(_ => new NpgsqlConnection(connectionString));
@@ -29,6 +46,7 @@ app.UseHttpsRedirection();
 
 app.UseRouting();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapStaticAssets();

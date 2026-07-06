@@ -1,0 +1,26 @@
+@page
+@model BudgetTrackingNew.Pages.LoginModel
+@{
+    ViewData["Title"] = "Přihlášení";
+}
+
+<h1>Přihlášení</h1>
+
+@if (!string.IsNullOrEmpty(Model.ErrorMessage))
+{
+    <div style="color: red;">
+        @Model.ErrorMessage
+    </div>
+}
+
+<form method="post">
+    <div>
+        <label asp-for="Email">Email:</label>
+        <input asp-for="Email" type="email" required />
+    </div>
+    <div>
+        <label asp-for="Password">Heslo:</label>
+        <input asp-for="Password" type="password" required />
+    </div>
+    <button type="submit">Přihlásit se</button>
+</form>
